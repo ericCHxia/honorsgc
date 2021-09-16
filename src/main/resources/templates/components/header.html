@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<header class="tm-header" id="tm-header" th:fragment="header(op)">
+  <div class="tm-header-wrapper">
+    <button class="navbar-toggler" type="button" aria-label="Toggle navigation">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="tm-site-header" align="center">
+      <img th:src="@{/img/logo.png}" width="240" alt="logo" src="/static/img/logo.png">
+    </div>
+    <nav class="tm-nav" id="tm-nav">
+      <ul>
+        <li class="tm-nav-item" th:classappend="${op}==0?'active':''"><a th:href="@{/}" class="tm-nav-link">
+          <i class="fas fa-home"></i>
+          全部
+        </a></li>
+        <li class="tm-nav-item" th:classappend="${op}==1?'active':''"><a th:href="@{/(type=1)}" class="tm-nav-link">
+          <i class="fas fa-pen"></i>
+          通知公告
+        </a></li>
+        <li class="tm-nav-item" th:classappend="${op}==2?'active':''"><a th:href="@{/(type=0)}" class="tm-nav-link">
+          <i class="fas fa-comments"></i>
+          资源分享
+        </a></li>
+        <li class="tm-nav-item" th:classappend="${op}==3?'active':''"><a th:href="@{/user}" class="tm-nav-link">
+          <i class="far fa-user"></i>
+          个人中心
+        </a></li>
+        <li class="tm-nav-item"><a th:href="@{/community}" class="tm-nav-link">
+          <i class="far fa-arrow-alt-circle-right"></i>
+          前往共同体平台
+        </a></li>
+        <li class="tm-nav-item" sec:authorize="hasRole('ADMIN')"><a th:href="@{/admin/}" target="_blank" class="tm-nav-link">
+          <i class="far fa-map"></i>
+          前往管理中心
+        </a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+</html>

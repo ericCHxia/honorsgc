@@ -1,0 +1,24 @@
+<!--
+  ~ Copyright (c) 2020-2021 杭州电子科技大学卓越学院 All Rights Reserved.
+  ~ @ProjectName: honor
+  ~ @FileName: search_form.html
+  ~ @Author: Eric
+  ~ @Version: 1.0
+  ~ @LastModified: 2021/9/1 下午8:07
+  -->
+
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<!-- Search form -->
+<div class="row tm-row" th:fragment="search_form(show_add)">
+    <div class="col-12">
+        <form method="GET" class="form-inline tm-mb-80 tm-search-form">
+            <input class="form-control tm-search-input" name="query" type="text" placeholder="Search..." aria-label="Search">
+            <button class="tm-search-button" type="submit">
+                <i class="fas fa-search tm-search-icon" aria-hidden="true"></i>
+            </button>
+        </form>
+    </div>
+    <a th:href="@{/add}" th:if="${show_add}" class="mb-2 tm-btn tm-btn-primary tm-prev-next">新建</a>
+</div>
+</html>

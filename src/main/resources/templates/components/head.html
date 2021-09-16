@@ -1,0 +1,24 @@
+<!--
+  ~ Copyright (c) 2020-2021 杭州电子科技大学卓越学院 All Rights Reserved.
+  ~ @ProjectName: honor
+  ~ @FileName: head.html
+  ~ @Author: Eric
+  ~ @Version: 1.0
+  ~ @LastModified: 2021/8/28 下午4:34
+  -->
+
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">全部 - 卓越学院学习分享平台</title>
+    <link rel="stylesheet" th:href="@{/fontawesome/css/all.min.css}"> <!-- https://fontawesome.com/ -->
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet"> <!-- https://fonts.google.com/ -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/templatemo-xtra-blog.css}" rel="stylesheet">
+    <link th:href="@{/css/editormd.min.css}" rel="stylesheet">
+    <link rel="apple-touch-icon-precomposed" th:href="@{/img/logo2.png}">
+    <link rel="shortcut icon" th:href="@{/img/logo2.png}">
+</head>
+</html>

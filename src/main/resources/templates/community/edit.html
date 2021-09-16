@@ -1,0 +1,82 @@
+<!--
+  ~ Copyright (c) 2020-2021 杭州电子科技大学卓越学院 All Rights Reserved.
+  ~ @ProjectName: honor
+  ~ @FileName: add.html
+  ~ @Author: Eric
+  ~ @Version: 1.0
+  ~ @LastModified: 2021/9/9 下午7:55
+  -->
+
+<!DOCTYPE html>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org"
+       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="components/head::head('新建 - 卓越学院成长共同体平台')">
+    <title>新建 - 卓越学院成长共同体平台</title>
+</head>
+<body>
+<header th:replace="community/header::header"></header>
+<div class="container-fluid">
+    <main class="tm-main">
+        <div class="row tm-row tm-mb-45">
+            <div class="col-12">
+                <h2 class="tm-color-primary tm-post-title tm-mb-60">修改共同体</h2>
+            </div>
+            <div class="col-lg-10 tm-contact-left">
+                <form method="POST" th:action="@{/community/save}" enctype="multipart/form-data" class="mb-5 ml-auto mr-0 tm-contact-form">
+                    <input type="hidden" name="id" th:value="${community.id}">
+                    <div class="form-group row mb-4">
+                        <label for="title" class="col-sm-3 col-form-label text-right tm-color-primary">标题</label>
+                        <div class="col-sm-9">
+                            <input class="form-control mr-0 ml-auto" name="title" id="title" type="text" th:value="${community.title}" required>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-4">
+                        <label for="dsc" class="col-sm-3 col-form-label text-right tm-color-primary">描述</label>
+                        <div class="col-sm-9">
+                            <input class="form-control mr-0 ml-auto" name="dsc" id="dsc" type="text" required th:value="${community.description}">
+                        </div>
+                    </div>
+                    <div class="form-group row mb-4">
+                        <label for="typ" class="col-sm-3 col-form-label text-right tm-color-primary">类别</label>
+
+                        <div class="col-sm-9">
+                            <select class="form-control mr-0 ml-auto" name="typ" id="typ" type="text">
+                                <option th:each="type:${types}"
+                                        th:text="${type.name}"
+                                        th:value="${type.id}" th:selected="${type.id}==${community.type.id}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-5">
+                        <label for="detail" class="col-sm-3 col-form-label text-right tm-color-primary">正文</label>
+                        <div class="col-sm-9">
+                            <textarea class="form-control mr-0 ml-auto" name="detail" id="detail" rows="12" required th:text="${community.detail}"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-4">
+                        <label for="lmt" class="col-sm-3 col-form-label text-right tm-color-primary">人数限制</label>
+                        <div class="col-sm-9">
+                            <input class="form-control mr-0 ml-auto" name="lmt" id="lmt" type="number" th:value="${community.lmt}" required>
+                            <p>输入0表示无人数限制</p>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-4">
+                        <label for="file" class="col-sm-3 col-form-label text-right tm-color-primary">替换封面图片</label>
+                        <div class="col-sm-9">
+                            <input class="form-control mr-0 ml-auto" name="file" id="file" type="file">
+                        </div>
+                    </div>
+                    <div class="form-group row text-right">
+                        <div class="col-12">
+                            <button class="tm-btn tm-btn-primary tm-btn-small">提交</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/templatemo-script.js"></script>
+</body>
+</html>

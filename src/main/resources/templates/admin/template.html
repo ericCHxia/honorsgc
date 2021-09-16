@@ -1,0 +1,244 @@
+<!--
+  ~ Copyright (c) 2020-2021 杭州电子科技大学卓越学院 All Rights Reserved.
+  ~ @ProjectName: honor
+  ~ @FileName: template.html
+  ~ @Author: Eric
+  ~ @Version: 1.0
+  ~ @LastModified: 2021/9/3 上午12:51
+  -->
+
+<!doctype html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="utf-8">
+    <meta name="author" content="order by dede58.com"/>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title}">概览 - 卓越平台管理中心</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap3.3.5.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/admin.css}">
+    <link rel="apple-touch-icon-precomposed" th:href="@{/img/logo2.png}">
+    <link rel="shortcut icon" th:href="@{/img/logo2.png}">
+    <script th:src="@{/js/jquery-2.1.4.min.js}"></script>
+</head>
+<header th:fragment="header(user)">
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">切换导航</span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+                    <span class="icon-bar"></span></button>
+                <a class="navbar-brand" th:href="@{/}">卓越平台管理中心</a>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="">消息</a></li>
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false">[[${user.name}]]
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-left">
+                            <li><a title="查看或修改个人信息" data-toggle="modal" data-target="#seeUserInfo">个人信息</a></li>
+                            <li><a title="修改密码" data-toggle="modal" data-target="#changePWD">修改密码</a></li>
+                        </ul>
+                    </li>
+                    <li><a th:href="@{/logout}" onClick="if(!confirm('是否确认退出？'))return false;">退出登录</a></li>
+                </ul>
+                <form th:action="${#httpServletRequest.getServletPath()}" method="get" class="navbar-form navbar-right" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" autocomplete="off" placeholder="键入关键字搜索" maxlength="15" name="search" id="search" th:value="${param.search}">
+                        <span class="input-group-btn">
+              <button class="btn btn-default" type="submit" id="searchBtn">搜索</button>
+              </span></div>
+                </form>
+            </div>
+        </div>
+    </nav>
+</header>
+<aside class="col-sm-3 col-md-2 col-lg-2 sidebar" th:fragment="sidebar(op)">
+    <ul class="nav nav-sidebar">
+        <li th:class="${op}==0?'active':''"><a th:href="@{/admin}">概览</a></li>
+    </ul>
+    <ul class="nav nav-sidebar">
+        <li th:class="${op}==1?'active':''"><a th:href="@{/admin/article}">文章</a></li>
+        <li th:class="${op}==2?'active':''"><a th:href="@{/admin/notice}">公告</a></li>
+        <li th:class="${op}==3?'active':''"><a th:href="@{/admin/community}">共同体</a></li>
+    </ul>
+    <ul class="nav nav-sidebar">
+        <li th:class="${op}==4?'active':''"><a th:href="@{/admin/tags}">标签</a></li>
+        <li th:class="${op}==6?'active':''">
+            <a th:href="@{/admin/type}">共同体类</a>
+        </li>
+    </ul>
+    <ul class="nav nav-sidebar">
+        <li th:class="${op}==5?'active':''"><a th:href="@{/admin/user}">用户</a>
+        </li>
+    </ul>
+</aside>
+<ul class="pagination pagenav" th:fragment="page_nav(page)">
+    <li th:class="${page.getNumber()}==0?'disabled':''">
+        <a th:href="@{${#httpServletRequest.getRequestURI()}(page=0)}" th:if="${page.getNumber()}>0">
+            <span aria-hidden="true">&laquo;</span>
+        </a>
+        <a th:if="${page.getNumber()}==0">
+            <span aria-hidden="true">&laquo;</span>
+        </a>
+    </li>
+
+    <li th:each="page_num:${#numbers.sequence(0,page.getTotalPages()-1)}"
+        th:if="${page.getTotalPages()<=5}"
+        th:class="(${page_num}==${page.getNumber()})?'active':''">
+        <a th:href="@{${#httpServletRequest.getRequestURI()}(page=${page_num})}"
+           th:text="${page_num}+1"></a>
+    </li>
+
+    <li th:each="page_num:${#numbers.sequence(0,4)}"
+        th:if="${page.getTotalPages()>5&&page.getNumber()<2}"
+        th:class="(${page_num}==${page.getNumber()})?'active':''">
+        <a th:href="@{${#httpServletRequest.getRequestURI()}(page=${page_num})}"
+           th:text="${page_num}+1"></a>
+    </li>
+
+    <li th:each="page_num:${#numbers.sequence(page.getTotalPages()-5,page.getTotalPages()-1)}"
+        th:if="${page.getTotalPages()>5&&page.getNumber()>2&&page.getNumber()>=(page.getTotalPages()-3)}"
+        th:class="(${page_num}==${page.getNumber()})?'active':''">
+        <a th:href="@{${#httpServletRequest.getRequestURI()}(page=${page_num})}"
+           th:text="${page_num}+1"></a>
+    </li>
+
+    <li th:each="page_num:${#numbers.sequence(page.getNumber()-2,page.getNumber()+2)}"
+        th:if="${page.getTotalPages()>5&&page.getNumber()>=2&&page.getNumber()<(page.getTotalPages()-3)}"
+        th:class="(${page_num}==${page.getNumber()})?'active':''">
+        <a th:href="@{${#httpServletRequest.getRequestURI()}(page=${page_num})}"
+           th:text="${page_num}+1"></a>
+    </li>
+
+    <li th:class="(${page.getNumber()}==${page.totalPages}-1)?'disabled':''">
+        <a th:if="${page.getNumber()}==${page.totalPages}-1">
+            <span aria-hidden="true">&raquo;</span>
+        </a>
+        <a th:if="${page.getNumber()}<${page.totalPages}-1" th:href="@{${#httpServletRequest.getRequestURI()}(page=${page.getTotalPages()}-1)}">
+            <span aria-hidden="true">&raquo;</span>
+        </a>
+    </li>
+</ul>
+<!--个人信息模态框-->
+<div class="modal fade" id="seeUserInfo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" th:fragment="user_info(user)">
+    <!--[[${user.subject}]]-->
+    <div class="modal-dialog" role="document">
+        <form th:action="@{/admin/user_save}" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" >个人信息修改</h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table" style="margin-bottom:0px;">
+                        <thead>
+                        <tr></tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td width="20%">姓名:</td>
+                            <td width="80%"><input type="text" th:value="${user.name}" class="form-control" name="name" maxlength="10" autocomplete="off" disabled/></td>
+                        </tr>
+                        <tr>
+                            <td width="20%">学号:</td>
+                            <td width="80%"><input type="text" th:value="${user.num}" class="form-control" name="num" maxlength="10" autocomplete="off" disabled/></td>
+                        </tr>
+                        <tr>
+                            <td width="20%">班级:</td>
+                            <td width="80%"><input type="text" th:value="${user.classId}" class="form-control" name="clas" maxlength="10" autocomplete="off" disabled/></td>
+                        </tr>
+                        <tr>
+                            <td width="20%">专业:</td>
+                            <td width="80%"><input type="text" th:value="${user.subject}" class="form-control" name="subj" maxlength="13" autocomplete="off" /></td>
+                        </tr>
+                        <tr>
+                            <td width="20%">学院:</td>
+                            <td width="80%"><input type="text" th:value="${user.college}" class="form-control" name="sch" maxlength="13" autocomplete="off" /></td>
+                        </tr>
+                        <tr>
+                            <td width="20%">QQ:</td>
+                            <td width="80%"><input type="text" th:value="${user.qq}" class="form-control" name="qq" maxlength="13" autocomplete="off" /></td>
+                        </tr>
+                        </tbody>
+                        <tfoot>
+                        <tr></tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">提交</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!--密码修改模态框-->
+<div class="modal fade" id="changePWD" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" th:fragment="chang_pwd">
+    <div class="modal-dialog" role="document">
+        <form method="POST" th:action="@{/commitpwd}" onsubmit="return checkForm()">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" >密码修改</h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table" style="margin-bottom:0px;">
+                        <thead>
+                        <tr></tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td width="20%">原密码:</td>
+                            <td width="80%"><input type="password" class="form-control" id="password0" maxlength="10" autocomplete="off"/></td>
+                            <input type="hidden" class="form-control" id="password0_md5" name="pwd0"/>
+                        </tr>
+                        <tr>
+                            <td width="20%">新密码:</td>
+                            <td width="80%"><input type="password" class="form-control" id="password1" maxlength="10" autocomplete="off" /></td>
+                        </tr>
+                        <tr>
+                            <td width="20%">确认密码:</td>
+                            <td width="80%"><input type="password"  class="form-control" id="password2" maxlength="10" autocomplete="off"/></td>
+                            <input type="hidden" class="form-control" id="newp_md5" name="npwd"/>
+                        </tr>
+                        </tbody>
+                        <tfoot>
+                        <tr></tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">提交</button>
+                </div>
+            </div>
+        </form>
+        <script src="/static/js/md5.js" th:src="@{/js/md5.js}"></script>
+        <script>
+            function checkForm() {
+                var pwd0 = document.getElementById('password0');
+                var pwd0_md5 = document.getElementById('password0_md5');
+                pwd0_md5.value=hex_md5(pwd0.value);// 把密码变为MD5
+                var pwd1 = document.getElementById('password1');
+                var pwd2 = document.getElementById('password2');
+                if (pwd1.value===pwd2.value) {
+                    var newp_md5 = document.getElementById('newp_md5')
+                    newp_md5.value=hex_md5(pwd2.value);// 把密码变为MD5
+                    return true;
+                }
+                else{
+                    alert ("两次输入密码不一致");
+                    return false;
+                }
+            }
+        </script>
+    </div>
+</div>
+</html>

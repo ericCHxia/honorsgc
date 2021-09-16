@@ -1,0 +1,68 @@
+<!--
+  ~ Copyright (c) 2020-2021 杭州电子科技大学卓越学院 All Rights Reserved.
+  ~ @ProjectName: honor
+  ~ @FileName: user.html
+  ~ @Author: Eric
+  ~ @Version: 1.0
+  ~ @LastModified: 2021/9/4 上午10:59	
+  -->
+
+<!DOCTYPE html>
+<html lang="zh"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="components/head.html::head('个人中心 - 卓越学院学习分享平台')">
+    <title>个人中心 - 卓越学院学习分享平台</title>
+</head>
+<body>
+<header th:replace="components/header::header(3)">
+</header>
+<div class="container-fluid">
+    <main class="tm-main">
+        <div th:replace="components/search_form::search_form(0)"></div>
+
+        <h2 class="tm-pt-30 tm-color-primary tm-post-title2 ">我的信息</h2>
+        <div class="row tm-row col-12">
+            姓名：[[${user.name}]]<br>
+            班级：[[${user.classId}]]<br>
+            学号：[[${user.num}]]<br>
+            专业：[[${user.subject}]]<br>
+            学院：[[${user.college}]]
+            <div class="col-12">
+                <a th:href="@{/changepwd}" class="mb-2 tm-btn tm-btn-primary tm-prev-next tm-mr-20">修改密码</a>
+                <a th:href="@{/logout}" class="mb-2 tm-btn tm-btn-primary tm-prev-next">退出登录</a>
+            </div>
+        </div>
+
+
+        <h2 class="tm-pt-30 tm-color-primary tm-post-title2 ">我发布的</h2>
+        <div class="row tm-row" th:each="content:${contents}">
+            <article class="col-12">
+                <hr class="tm-hr-primary">
+                <a class="effect-lily tm-post-link tm-pt-20" th:href="@{'/post/'+${content.id}}">
+                    <h2 class="tm-pt-30 tm-color-primary tm-post-title" th:text="${content.title}">
+                        <span th:if="${content.stat}==0">[等待审核]</span>
+                        <span th:if="${content.stat}==2">[隐藏]</span>
+                        卓越学院学习分享平台使用说明
+                    </h2>
+                </a>
+                <p class="tm-pt-30" th:text="${content.dsc}"></p>
+                <hr>
+                <span th:if="${content.typ} == 1">通知公告</span>
+                <span th:if="${content.typ} == 0">资源分享</span>
+                <span th:text="'创建者：'+${content.usr.name}"></span>
+            </article>
+        </div>
+
+        <footer class="row tm-row">
+            <hr class="col-12">
+            <div class="col-md-6 col-12 tm-color-blue">
+                杭州电子科技大学卓越学院
+            </div>
+        </footer>
+    </main>
+</div>
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/templatemo-script.js}"></script>
+</body>
+</html>

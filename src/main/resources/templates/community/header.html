@@ -1,0 +1,57 @@
+<!--
+  ~ Copyright (c) 2020-2021 杭州电子科技大学卓越学院 All Rights Reserved.
+  ~ @ProjectName: honor
+  ~ @FileName: header.html
+  ~ @Author: Eric
+  ~ @Version: 1.0
+  ~ @LastModified: 2021/9/6 上午8:22
+  -->
+
+<!DOCTYPE html>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org"
+       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<header class="tm-header" id="tm-header" th:fragment="header">
+    <div class="tm-header-wrapper">
+        <button class="navbar-toggler" type="button" aria-label="Toggle navigation">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="tm-site-header" align="center">
+            <img src="/static/img/logo.png" width="240" th:src="@{/img/logo.png}">
+        </div>
+        <nav class="tm-nav" id="tm-nav">
+            <ul>
+                <li class="tm-nav-item"
+                    th:classappend="${#httpServletRequest.getServletPath().equals('/community')}?'active'">
+                    <a th:href="@{/community}" class="tm-nav-link">
+                    <i class="fas fa-home"></i>
+                    主页
+                    </a>
+                </li>
+                <li class="tm-nav-item"
+                    th:classappend="${#httpServletRequest.getServletPath().equals('/community/mine')}?'active'">
+                    <a th:href="@{/community/mine}" class="tm-nav-link">
+                    <i class="fas fa-pen"></i>
+                    我发布的
+                </a></li>
+                <li class="tm-nav-item"
+                    th:classappend="${#httpServletRequest.getServletPath().equals('/community/mgd')}?'active'">
+                    <a th:href="@{/community/mgd}" class="tm-nav-link">
+                    <i class="fas fa-users"></i>
+                    我指导的
+                </a></li>
+                <li class="tm-nav-item"
+                    th:classappend="${#httpServletRequest.getServletPath().equals('/community/ptcp')}?'active'">
+                    <a th:href="@{/community/ptcp}" class="tm-nav-link">
+                    <i class="far fa-comments"></i>
+                    我参与的
+                </a></li>
+                <li class="tm-nav-item"><a th:href="@{/}" class="tm-nav-link">
+                    <i class="far fa-arrow-alt-circle-left"></i>
+                    返回
+                </a></li>
+            </ul>
+        </nav>
+
+    </div>
+</header>
+</html>

@@ -1,0 +1,56 @@
+<!--
+  ~ Copyright (c) 2020-2021 杭州电子科技大学卓越学院 All Rights Reserved.
+  ~ @ProjectName: honor
+  ~ @FileName: markdown.html
+  ~ @Author: Eric
+  ~ @Version: 1.0
+  ~ @LastModified: 2021/9/9 下午11:03
+  -->
+
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<div id="layout" th:fragment="markdown(md)">
+    <div id="test-editormd">
+        <textarea name="detail" style="display:none;" th:text="${md}"></textarea>
+    </div>
+</div>
+<div th:fragment="script">
+    <script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/editormd.min.js"  th:src="@{/lib/editor/editormd.min.js}"></script>
+    <script type="text/javascript">
+        var testEditor;
+        $(function() {
+            editormd.emoji = {
+                path: "https://cdn.jsdelivr.net/npm/emoji-cst/graphics/emojis/",
+                ext: ".png"
+            }
+            editormd.twemoji = {
+                path: "https://cdn.staticfile.org/twemoji/13.1.0/svg/",
+                ext: ".svg"
+            }
+            testEditor = editormd("test-editormd", {
+                width   : "100%",
+                height  : 640,
+                emoji           : true,
+                taskList        : true,
+                flowChart       : true,
+                sequenceDiagram : true,
+                path: "/lib/editor/lib/",
+                tex : true,
+                imageUpload: true,
+                imageFormats   : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+                imageUploadURL : "/upload",
+                toolbarIcons : function() {
+                    return ["undo", "redo", "|",
+                            "bold", "del", "italic", "quote", "ucwords","|",
+                            "h1", "h2", "h3", "h4", "|",
+                            "list-ul", "list-ol", "hr", "|",
+                            "link", "reference-link", "image", "code", "preformatted-text", "code-block", "table", "emoji", "|",
+                            "watch", "preview", "clear", "search", "||",
+                            "help"
+                    ]
+                },
+            });
+        });
+    </script>
+</div>
+</html>

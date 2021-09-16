@@ -1,0 +1,81 @@
+<!--
+  ~ Copyright (c) 2020-2021 杭州电子科技大学卓越学院 All Rights Reserved.
+  ~ @ProjectName: honor
+  ~ @FileName: index.html
+  ~ @Author: Eric
+  ~ @Version: 1.0
+  ~ @LastModified: 2021/9/6 上午8:18
+  -->
+
+<!DOCTYPE html>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org"
+       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="components/head.html::head(${title})">
+    <title th:text="${title}"></title>
+</head>
+<body>
+<header th:replace="community/header::header"></header>
+<div class="container-fluid">
+    <main class="tm-main">
+        <!-- Search form -->
+        <div class="row tm-row">
+            <div class="col-12">
+                <form method="GET" class="form-inline tm-mb-80 tm-search-form">
+                    <select class="form-control tm-search-input" style="width: 200px" name="typ" id="typ" type="text">
+                        <option value="-1">全部</option>
+                        <option th:each="type:${types}"
+                                th:selected="${#strings.equals(type.id,param.typ)}"
+                                th:text="${type.name}"
+                                th:value="${type.id}"></option>
+                    </select>
+                    <input class="form-control tm-search-input" name="search" type="text" placeholder="Search..." th:value="${param.search}" aria-label="Search">
+                    <button class="tm-search-button" type="submit">
+                        <i class="fas fa-search tm-search-icon" aria-hidden="true"></i>
+                    </button>
+                </form>
+                <a th:href="@{/community/add}" class="mb-2 tm-btn tm-btn-primary tm-prev-next">新建</a>
+            </div>
+        </div>
+
+        <div class="row tm-row">
+            <article class="col-12 col-md-6 tm-post" th:each="community:${page.getContent()}">
+                <hr class="tm-hr-primary">
+                <a th:href="@{/community/post/{id}(id=${community.id})}" class="effect-lily tm-post-link tm-pt-60">
+                    <div class="tm-post-link-inner">
+                        <img th:src="${community.img!=null}?('/upload/img/'+${community.img}):'/img/logo3.png'" class="img-fluid" alt="Image" src="" style="max-width: 500px;max-height: 500px;">
+                    </div>
+                    <span class="position-absolute tm-new-badge" th:if="${#dates.createNow().getTime()<community.getTim().getTime()+86400000}">新</span>
+                    <h2 class="tm-pt-30 tm-color-primary tm-post-title" th:text="${community.title}"></h2>
+                </a>
+                <p class="tm-pt-30" th:text="${community.description}"></p>
+                <hr>
+                <div class="d-flex justify-content-between">
+                    <span th:text="${community.type.name}"></span>
+                    <span>创建者：[[${community.user.name}]]</span>
+                </div>
+            </article>
+        </div>
+<div class="row tm-row tm-mt-100 tm-mb-75">
+    <div class="tm-prev-next-wrapper">
+        <a class="mb-2 tm-btn tm-btn-primary tm-prev-next disabled tm-mr-20" th:if="${page.isFirst()}">上一页</a>
+        <a class="mb-2 tm-btn tm-btn-primary tm-prev-next"
+           th:href="@{${#httpServletRequest.getServletPath()}(page=${page.getNumber()-1})}"
+           th:unless="${page.getNumber()}==0">上一页</a>
+        <a class="mb-2 tm-btn tm-btn-primary tm-prev-next disabled tm-mr-20" th:if="${page.isLast()}">下一页</a>
+        <a class="mb-2 tm-btn tm-btn-primary tm-prev-next"
+           th:href="@{${#httpServletRequest.getServletPath()}(page=${page.getNumber()+1})}"
+           th:unless="${page.isLast()}">下一页</a>
+    </div>
+</div>
+<footer class="row tm-row">
+    <hr class="col-12">
+    <div class="col-md-6 col-12 tm-color-blue">
+        杭州电子科技大学卓越学院
+    </div>
+</footer>
+</main>
+</div>
+<script src="/static/js/jquery.min.js" th:src="@{/js/jquery.min.js}"></script>
+<script src="/static/js/templatemo-script.js" th:src="@{/js/templatemo-script.js}"></script>
+</body>
+</html>

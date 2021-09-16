@@ -1,0 +1,91 @@
+<!--
+  ~ Copyright (c) 2020-2021 杭州电子科技大学卓越学院 All Rights Reserved.
+  ~ @ProjectName: honor
+  ~ @FileName: changepwd.html
+  ~ @Author: Eric
+  ~ @Version: 1.0
+  ~ @LastModified: 2021/9/4 上午11:24	
+  -->
+
+<!DOCTYPE html>
+<html lang="zh"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}">
+
+    <!-- Loding font -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,700" rel="stylesheet">
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" type="text/css" href="../static/css/login.css" th:href="@{/css/login.css}">
+    <link rel="apple-touch-icon-precomposed" href="../static/img/logo2.png" th:href="@{/img/logo2.png}">
+    <link rel="shortcut icon" href="../static/img/logo2.png" th:href="@{/img/logo2.png}">
+    <script src="../static/js/md5.js" th:src="@{/js/md5.js}"></script>
+    <title>修改密码</title>
+</head>
+<body>
+
+<!-- Backgrounds -->
+
+<div id="login-bg" class="container-fluid">
+
+    <div class="bg-img"></div>
+    <div class="bg-color"></div>
+</div>
+
+<!-- End Backgrounds -->
+
+<div class="container" id="login">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="login">
+                <h1>修改密码</h1>
+                <!-- Loging form -->
+                <form method="POST" th:action="@{/commitpwd}" onsubmit="return checkForm()" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <input type="password" class="form-control" id="password0" placeholder="原密码">
+                        <input type="hidden" id="password0_md5" name="pwd0">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" id="password1" placeholder="新密码">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" id="password2" placeholder="确认密码">
+                        <input type="hidden" id="newp_md5" name="npwd">
+                    </div>
+                    <br>
+                    <button type="submit" class="btn btn-lg btn-block btn-success">确定</button>
+                    <script>
+                        function checkForm() {
+                            var pwd0 = document.getElementById('password0');
+                            var pwd0_md5 = document.getElementById('password0_md5');
+                            pwd0_md5.value=hex_md5(pwd0.value);// 把密码变为MD5
+                            var pwd1 = document.getElementById('password1');
+                            var pwd2 = document.getElementById('password2');
+                            if (pwd1.value==pwd2.value) {
+                                var newp_md5 = document.getElementById('newp_md5')
+                                newp_md5.value=hex_md5(pwd2.value);// 把密码变为MD5
+                                return true;
+                            }
+                            else{
+                                alert ("两次输入密码不一致");
+                                return false;
+                            }
+                        }
+                    </script>
+                </form>
+                <!-- End Loging form -->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>

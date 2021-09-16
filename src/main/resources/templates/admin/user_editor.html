@@ -1,0 +1,62 @@
+<!--
+  ~ Copyright (c) 2020-2021 杭州电子科技大学卓越学院 All Rights Reserved.
+  ~ @ProjectName: honor
+  ~ @FileName: user_editor.html
+  ~ @Author: Eric
+  ~ @Version: 1.0
+  ~ @LastModified: 2021/9/16 上午10:34
+  -->
+
+<!doctype html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/template::head('用户编辑 - 卓越平台管理中心')">
+    <title>用户编辑 - 卓越平台管理中心</title>
+</head>
+
+<body class="user-select">
+<section class="container-fluid">
+    <header th:replace="admin/template::header(${user})"></header>
+    <div class="row">
+        <aside class="col-sm-3 col-md-2 col-lg-2 sidebar" th:replace="admin/template::sidebar(-1)">
+        </aside>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-lg-10 col-md-offset-2 main" id="main">
+            <h1 class="page-header">编辑用户</h1>
+            <form action="" method="post">
+                <div class="form-group">
+                    <label for="num">学号：</label>
+                    <input style="width:400px;" type="text" id="num" name="num" class="form-control" th:value="${targetUser.num}" required autocomplete="off">
+                    <label for="clas">班级：</label>
+                    <input style="width:400px;" type="text" id="clas" name="clas" class="form-control" th:value="${targetUser.classId}" required autocomplete="off">
+                    <label for="name">姓名：</label>
+                    <input style="width:400px;" type="text" id="name" name="name" class="form-control" th:value="${targetUser.name}" required autocomplete="off">
+                    <label for="subj">专业：</label>
+                    <input style="width:400px;" type="text" id="subj" name="subj" class="form-control" th:value="${targetUser.subject}" autocomplete="off">
+                    <label for="sch">学院：</label>
+                    <input style="width:400px;" type="text" id="sch" name="sch" class="form-control" th:value="${targetUser.college}" autocomplete="off">
+                    <label for="qq">QQ：</label>
+                    <input style="width:400px;" type="text" id="qq" name="qq" class="form-control" th:value="${targetUser.qq}" autocomplete="off">
+                    <label for="priv">权限：</label>
+                    <select class="form-control" style="width: 200px" name="priv" id="priv" th:disabled="${user.privilege}!=2">
+                    <option value=0 th:selected="${targetUser.privilege==0}">
+                    普通用户</option>
+                    <option value=1 th:selected="${targetUser.privilege==0}">
+                    初级管理员</option>
+                    <option value=2 th:selected="${targetUser.privilege==0}">
+                    高级管理员</option>
+                    </select>
+                    <label>密码：</label>
+                    <br><a><input type="button" class="btn btn-default" value='重设密码'></a>
+                </div>
+                <button class="btn btn-primary" type="submit" name="submit">保存</button>
+            </form>
+        </div>
+    </div>
+</section>
+<!--用户信息框-->
+<div th:replace="admin/template.html::user_info(${user})"></div>
+<!--密码修改模态框-->
+<div th:replace="admin/template.html::chang_pwd"></div>
+<script src="/static/js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}"></script>
+<script src="/static/js/admin-scripts.js" th:src="@{/js/admin-scripts.js}"></script>
+</body>
+</html>

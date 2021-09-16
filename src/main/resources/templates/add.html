@@ -1,0 +1,77 @@
+<!--
+  ~ Copyright (c) 2020-2021 杭州电子科技大学卓越学院 All Rights Reserved.
+  ~ @ProjectName: honor
+  ~ @FileName: add.html
+  ~ @Author: Eric
+  ~ @Version: 1.0
+  ~ @LastModified: 2021/8/31 下午9:55
+  -->
+
+<!DOCTYPE html>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org"
+       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="components/head.html::head('新建 - 卓越学院学习分享平台')">
+    <title>新建 - 卓越学院学习分享平台</title>
+</head>
+<body>
+<header th:replace="components/header.html::header(0)"></header>
+<div class="container-fluid">
+    <main class="tm-main">
+        <div th:replace="components/search_form.html::search_form(show_add=false)"></div>
+        <div class="row tm-row tm-mb-45">
+            <div class="col-12">
+                <h2 class="tm-color-primary tm-post-title tm-mb-60">新建分享</h2>
+            </div>
+            <div class="col-lg-10 tm-contact-left">
+                <form method="POST" th:action="@{/commit}" enctype="multipart/form-data" class="mb-5 ml-auto mr-0 tm-contact-form">
+                    <div class="form-group row mb-4">
+                        <label for="title" class="col-sm-3 col-form-label text-right tm-color-primary">标题</label>
+                        <div class="col-sm-9">
+                            <input class="form-control mr-0 ml-auto" name="title" id="title" type="text" required>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-4">
+                        <label for="dsc" class="col-sm-3 col-form-label text-right tm-color-primary">描述</label>
+                        <div class="col-sm-9">
+                            <input class="form-control mr-0 ml-auto" name="dsc" id="dsc" type="text" required>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-4">
+                        <label for="typ" class="col-sm-3 col-form-label text-right tm-color-primary">类别</label>
+                        <div class="col-sm-9">
+                            <select class="form-control mr-0 ml-auto" name="typ" id="typ" type="text">
+                                <option value=0>资源分享</option>
+                                <option value=1 sec:authorize="hasRole('ADMIN')">通知公告</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- 添加标签功能 !-->
+                    <div class="form-group row mb-4">
+                        <label for="typ" class="col-sm-3 col-form-label text-right tm-color-primary">标签</label>
+                        <div class="col-sm-9">
+                            <select class="form-control mr-0 ml-auto" name="tag" id="tag" type="text">
+                                <option th:each="tag:${tags}" th:value="${tag.id}" th:text="${tag.name}"></option>
+                            </select>
+                            <p>（没有想要的标签？试试<a th:href="@{/add_tag}">新建标签</a>）</p>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-5">
+                        <label for="detail" class="col-sm-3 col-form-label text-right tm-color-primary">正文</label>
+                        <div class="col-sm-9">
+                            <textarea class="form-control mr-0 ml-auto" name="detail" id="detail" rows="12" required></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group row text-right">
+                        <div class="col-12">
+                            <button class="tm-btn tm-btn-primary tm-btn-small">提交</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+<script th:src="@{js/jquery.min.js}"></script>
+<script th:src="@{js/templatemo-script.js}"></script>
+</body>
+</html>

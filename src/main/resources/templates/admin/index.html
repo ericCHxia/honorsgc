@@ -1,0 +1,94 @@
+<!--
+  ~ Copyright (c) 2020-2021 杭州电子科技大学卓越学院 All Rights Reserved.
+  ~ @ProjectName: honor
+  ~ @FileName: index.html
+  ~ @Author: Eric
+  ~ @Version: 1.0
+  ~ @LastModified: 2021/9/3 上午12:49
+  -->
+
+<!doctype html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/template.html::head('概览 - 卓越平台管理中心')">
+    <title>概览 - 卓越平台管理中心</title>
+</head>
+<body class="user-select">
+<section class="container-fluid">
+    <header th:replace="admin/template.html::header(${user})"></header>
+    <div class="row">
+        <aside th:replace="admin/template.html::sidebar(0)"></aside>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-lg-10 col-md-offset-2 main" id="main">
+            <h1 class="page-header">信息总览</h1>
+            <div class="row placeholders">
+                <div class="col-xs-6 col-sm-3 placeholder">
+                    <h4>文章</h4>
+                    <span class="text-muted">[[${article_num}]] 条</span> </div>
+                <div class="col-xs-6 col-sm-3 placeholder">
+                    <h4>公告</h4>
+                    <span class="text-muted">[[${notice_num}]] 条</span> </div>
+                <div class="col-xs-6 col-sm-3 placeholder">
+                    <h4>共同体</h4>
+                    <span class="text-muted">[[${gtt_num}]] 条</span> </div>
+                <div class="col-xs-6 col-sm-3 placeholder">
+                    <h4>用户数</h4>
+                    <span class="text-muted">[[${user_num}]] 人</span> </div>
+            </div>
+            <h1 class="page-header">状态</h1>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <tbody>
+                    <tr>
+                        <td>登录者：<span th:text="${user.name}"></span></td>
+                    </tr>
+                    <tr>
+                        <td>登录IP：[[${#httpServletRequest.remoteAddr}]]</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <h1 class="page-header">系统信息</h1>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                    <tr> </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>管理员个数：</td>
+                        <td>[[${admin_num}]] 人</td>
+                        <td>JAVA版本：</td>
+                        <td>[[${java_version}]]</td>
+                    </tr>
+                    <tr>
+                        <td>操作系统:</td>
+                        <td>[[${sys_name}]]</td>
+                        <td>构架:</td>
+                        <td>[[${sys_arch}]]</td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <tr></tr>
+                    </tfoot>
+                </table>
+            </div>
+            <footer>
+                <h1 class="page-header">程序信息</h1>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </footer>
+        </div>
+    </div>
+</section>
+<!--用户信息框-->
+<div th:replace="admin/template.html::user_info(${user})"></div>
+<!--密码修改模态框-->
+<div th:replace="admin/template.html::chang_pwd"></div>
+<script src="/static/js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}"></script>
+<script src="/static/js/admin-scripts.js" th:src="@{/js/admin-scripts.js}"></script>
+</body>
+</html>

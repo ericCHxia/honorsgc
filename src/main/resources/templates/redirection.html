@@ -1,0 +1,59 @@
+<!--
+  ~ Copyright (c) 2020-2021 杭州电子科技大学卓越学院 All Rights Reserved.
+  ~ @ProjectName: honor
+  ~ @FileName: redirection.html
+  ~ @Author: Eric
+  ~ @Version: 1.0
+  ~ @LastModified: 2021/9/4 下午7:36
+  -->
+
+<!DOCTYPE html>
+<html lang="zh"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="components/head.html::head('页面转跳 - 卓越学院学习分享平台')">
+    <title>页面转跳 - 卓越学院学习分享平台</title>
+</head>
+<body>
+<header th:replace="components/header::header(0)">
+</header>
+<div class="container-fluid">
+    <main class="tm-main">
+        <div th:replace="components/search_form::search_form(0)"></div>
+        <div class="row tm-row col-12" th:text="${message}">
+            5秒后，跳转。
+        </div>
+        <div class="row tm-row col-12" id = "time">
+            5秒后，跳转。
+        </div>
+        <button class="tm-btn tm-btn-primary tm-btn-small" onclick="location.href = url">立即转跳</button>
+        <footer class="row tm-row" th:replace="components/footer::footer">
+            <hr class="col-12">
+            <div class="col-md-6 col-12 tm-color-blue">
+                杭州电子科技大学卓越学院
+            </div>
+        </footer>
+    </main>
+    <script>
+        let url = "[[${url}]]";
+        if (url===""){
+            url="/";
+        }
+        let time = 5;
+
+        <!-- 2、倒计时读秒实现并判断跳转-->
+        function showTime (){
+            time--;
+            if(time<=0){
+                location.href = url;
+            }
+            var sp = document.getElementById("time");
+            sp.innerHTML = time+"秒后，跳转。" ;
+        }
+        var id = setInterval(showTime,1000);
+    </script>
+</div>
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/templatemo-script.js}"></script>
+</body>
+</html>

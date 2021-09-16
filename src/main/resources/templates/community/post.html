@@ -1,0 +1,186 @@
+<!--
+  ~ Copyright (c) 2020-2021 杭州电子科技大学卓越学院 All Rights Reserved.
+  ~ @ProjectName: honor
+  ~ @FileName: post.html
+  ~ @Author: Eric
+  ~ @Version: 1.0
+  ~ @LastModified: 2021/9/8 上午11:21	
+  -->
+
+<!DOCTYPE html>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org"
+       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="components/head::head('详情')">
+    <title>详情</title>
+</head>
+<body>
+<header class="tm-header" id="tm-header" th:replace="community/header::header">
+</header>
+<div class="container-fluid">
+    <main class="tm-main">
+        <!-- Search form -->
+        <div class="row tm-row">
+            <div class="col-12">
+                <form method="GET" class="form-inline tm-mb-80 tm-search-form" th:action="@{/community}">
+                    <input class="form-control tm-search-input" name="search" type="text" placeholder="Search..." aria-label="Search">
+                    <button class="tm-search-button" type="submit">
+                        <i class="fas fa-search tm-search-icon" aria-hidden="true"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="row tm-row tm-mb-45">
+            <div class="col-12">
+                <hr class="tm-hr-primary tm-mb-55">
+                <img style="display: inline-block; max-width: 100%; height: auto;"
+                     th:src="${community.img!=null}?('/upload/img/'+${community.img}):'/img/logo3.png'" alt="cover" src="/static/img/logo3.png">
+            </div>
+        </div>
+        <div class="row tm-row">
+            <div class="col-lg-8 tm-post-col">
+                <div class="tm-post-full">
+                    <div class="mb-4">
+                        <h2 class="pt-2 tm-color-primary tm-post-title" th:text="${community.title}"></h2>
+                        <ul class="tm-mb-40">
+                            <li>类别：[[${community.type.name}]]</li>
+                            <li th:if="${community.state}==0">状态：等待审核</li>
+                            <li th:if="${community.state}==2">状态：隐藏</li>
+                            <li>发布者：[[${community.user.name}]]</li>
+                            <li>发布时间：[[${#dates.format(community.tim, 'yyyy-MM-dd HH:mm')}]]</li>
+                        </ul>
+                        <article  id="editormd-view">
+                            <textarea style="display: none" th:text="${community.detail}" id="append-test"></textarea>
+                        </article>
+                        <span class="d-block text-left tm-color-primary" th:text="'人数限制：'+(${community.lmt}>0?${community.lmt}:'无限制')"><br>
+                        </span>
+                        <p class="d-block text-left tm-color-primary">参与者：
+                            <span th:each="participant:${community.participants}"
+                                  th:text="${participant.user.name}+' '">
+                            </span></p>
+                        <p class="d-block text-left tm-color-primary">指导者：
+                            <span th:each="manager:${community.managers}"
+                                  th:text="${manager.user.name}+' '"></span></p>
+                        <p class="d-block text-right tm-color-primary">参与人数：[[${community.participants.size()}]]</p>
+                        <p class="d-block text-right tm-color-primary">指导人数：[[${community.managers.size()}]]</p>
+                    </div>
+                    <div class="row tm-row tm-mt-100 tm-mb-75">
+                    <div class="tm-prev-next-wrapper">
+                        <a class="mb-2 tm-btn tm-btn-primary tm-prev-next"
+                           th:href="@{/community/edit/{id}(id=${community.id})}"
+                           th:if="${#authorization.expression('hasRole(''ADMIN'')')||user.equals(community.user)}">编辑</a>
+                        <a th:href="@{/community/del(id=${community.id})}"
+                           onClick="if(!confirm(\'删除后将不可恢复，是否继续？\'))return false;"
+                           class="mb-2 tm-btn tm-btn-primary tm-prev-next">删除</a>
+                        <a class="mb-2 tm-btn tm-btn-primary tm-prev-next"
+                           th:href="@{/community/change(id=${community.id},type=0)}"
+                           th:text="${community.isParticipant(user)}?'取消参与':'我要参与'"
+                           th:unless="${community.isManager(user)}"></a>
+                        <a class="mb-2 tm-btn tm-btn-primary tm-prev-next"
+                           th:href="@{/community/change(id=${community.id},type=1)}"
+                           th:text="${community.isManager(user)}?'取消指导':'我要指导'"
+                           th:unless="${community.isParticipant(user)}"></a>
+                        <a class="mb-2 tm-btn tm-btn-primary tm-prev-next"
+                           th:href="@{/community/export(id=${community.id})}">导出参与者名单</a>
+                        <a class="mb-2 tm-btn tm-btn-primary tm-prev-next"
+                           th:href="@{/community/change_state(id=${community.id})}"
+                           th:text="${community.state==0}?'通过审核':(${community.state==1}?'隐藏':'显示')"
+                           sec:authorize="hasRole('ADMIN')"></a>
+                    </div>
+                    </div>
+            </div>
+
+            <h2 class="tm-color-primary tm-post-title">活动记录</h2>
+                <div th:each="record:${community.records}">
+                    <hr class="tm-hr-primary tm-mb-45">
+                    <label class="tm-color-primary">活动记录人：</label><span th:text="${record.user.name}"></span>
+                    <div>
+                        <label class="tm-color-primary">活动照片：</label>
+                        <img alt=""
+                             src="" style="display: inline-block; width: 100%; max-width: 100%; height: auto;"
+                             th:src="@{'/upload/img/'+${record.img}}"
+                             th:unless="${#strings.equals(record.img,'')||record.img==null}">
+                        <p th:if="${#strings.equals(record.img,'')||record.img==null}">暂无图片</p>
+                    </div><br>
+                    <label class="tm-color-primary">参与成员：</label>
+                    <span th:each="attend:${record.users}" th:text="${attend.name}+' '"></span><br>
+                    <span class="tm-color-primary">活动时间：</span><span th:text="${#dates.format(record.tim, 'yyyy-MM-dd HH:mm')}"></span>
+                    <a th:href="@{/community/delrecord(id=${record.id})}"
+                       th:if="${record.user.id==user.id||community.isManager(user)||#authorization.expression('hasRole(''ADMIN'')')}">删除</a>
+                </div>
+                <form th:action="@{/community/record}" method="post" class="" enctype="multipart/form-data"
+                      th:if="${community.isParticipant(user)||community.isManager(user)||#authorization.expression('hasRole(''ADMIN'')')}">
+                    <input type="hidden" th:value="${community.id}" name="id">
+                    <h2 class="tm-color-primary tm-post-title mb-4">上传活动记录</h2>
+                    <div class="mb-4">
+                        <label for="detail" class=" col-form-label tm-color-primary">活动内容：</label>
+                        <textarea style="width:100%;" class="form-control" name="detail" id="detail" rows="6"></textarea>
+                    </div>
+                    <div class="form-group row mb-4">
+                        <label for="file" class="col-sm-3 col-form-label tm-color-primary">图片：</label>
+                        <div class="col-sm-9">
+                            <input class="form-control mr-0 ml-auto" name="file" id="file" type="file" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="tm-color-primary">参与成员：</label>
+                        <label th:each="manager:${community.managers}">
+                            <input type="checkbox" name="chk[]" th:value="${manager.user.id}"> [[${manager.user.name}]]
+                        </label>
+                        <label th:each="participant:${community.participants}">
+                            <input type="checkbox" name="chk[]" th:value="${participant.user.id}"> [[${participant.user.name}]]
+                        </label>
+                        <br>
+                    </div>
+                    <div class="text-right">
+                        <button class="tm-btn tm-btn-primary tm-btn-small" type="submit">发表</button>
+                    </div>
+            </form>
+        </div>
+
+        <aside class="col-lg-4 tm-aside-col">
+            <div class="tm-post-sidebar">
+                <hr class="mb-3 tm-hr-primary">
+                <h2 class="tm-mb-40 tm-post-title tm-color-primary">相关内容</h2>
+            </div>
+        </aside>
+</div>
+<footer class="row tm-row">
+    <hr class="col-12">
+    <div class="col-md-6 col-12 tm-color-blue">
+        杭州电子科技大学卓越学院
+    </div>
+</footer>
+</main>
+</div>
+<script src="/static/js/jquery.min.js" th:src="@{/js/jquery.min.js}"></script>
+<script src="/static/js/templatemo-script.js" th:src="@{/js/templatemo-script.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/editormd.min.js"  th:src="@{/lib/editor/editormd.min.js}"></script>
+<script th:src="@{/lib/editor/lib/marked.min.js}"></script>
+<script th:src="@{/lib/editor/lib/prettify.min.js}"></script>
+<script th:src="@{/lib/editor/lib/raphael.min.js}"></script>
+<script th:src="@{/lib/editor/lib/underscore.min.js}"></script>
+<script th:src="@{/lib/editor/lib/sequence-diagram.min.js}"></script>
+<script th:src="@{/lib/editor/lib/flowchart.min.js}"></script>
+<script th:src="@{/lib/editor/lib/jquery.flowchart.min.js}"></script>
+<script type="text/javascript">
+    var editormdView
+    $(function() {
+        editormd.emoji = {
+            path: "https://cdn.jsdelivr.net/npm/emoji-cst/graphics/emojis/",
+            ext: ".png"
+        }
+        editormd.twemoji = {
+            path: "https://cdn.staticfile.org/twemoji/13.1.0/svg/",
+            ext: ".svg"
+        }
+        editormdView = editormd.markdownToHTML("editormd-view", {
+            emoji           : true,
+            taskList        : true,
+            tex             : true,  // 默认不解析
+            flowChart       : true,  // 默认不解析
+            sequenceDiagram : true,  // 默认不解析
+        });
+    });
+</script>
+</body>
+</html>

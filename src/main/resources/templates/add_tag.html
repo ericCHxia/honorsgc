@@ -1,0 +1,45 @@
+<!--
+  ~ Copyright (c) 2020-2021 杭州电子科技大学卓越学院 All Rights Reserved.
+  ~ @ProjectName: honor
+  ~ @FileName: add_tag.html
+  ~ @Author: Eric
+  ~ @Version: 1.0
+  ~ @LastModified: 2021/9/1 下午7:40	
+  -->
+
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="head.html::head('新建标签 - 卓越学院学习分享平台')">
+    <title>新建标签 - 卓越学院学习分享平台</title>
+</head>
+<body>
+<header th:replace="header.html::header(0)"></header>
+<div class="container-fluid">
+    <main class="tm-main">
+        <div th:replace="components/search_form.html::search_form(show_add=false)"></div>
+        <div class="row tm-row tm-mb-45">
+            <div class="col-12">
+                <h2 class="tm-color-primary tm-post-title tm-mb-60">新建标签</h2>
+            </div>
+            <div class="col-lg-10 tm-contact-left">
+                <form method="POST" th:action="@{/commit_tag}" enctype="multipart/form-data" class="mb-5 ml-auto mr-0 tm-contact-form">
+                    <div class="form-group row mb-4">
+                        <label class="col-sm-3 col-form-label text-right tm-color-primary" for="tagname">标签名</label>
+                        <div class="col-sm-9">
+                            <input class="form-control mr-0 ml-auto" name="tagname" id="tagname" type="text" required>
+                        </div>
+                    </div>
+                    <div class="form-group row text-right">
+                        <div class="col-12">
+                            <button class="tm-btn tm-btn-primary tm-btn-small">提交</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+<script th:src="@{js/jquery.min.js}"></script>
+<script th:src="@{js/templatemo-script.js}"></script>
+</body>
+</html>

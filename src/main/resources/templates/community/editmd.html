@@ -1,0 +1,65 @@
+<!--
+  ~ Copyright (c) 2020-2021 杭州电子科技大学卓越学院 All Rights Reserved.
+  ~ @ProjectName: honor
+  ~ @FileName: add.html
+  ~ @Author: Eric
+  ~ @Version: 1.0
+  ~ @LastModified: 2021/9/9 下午7:55
+  -->
+
+<!DOCTYPE html>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org"
+       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="components/head::head('编辑 - 卓越学院成长共同体平台')">
+    <title>编辑 - 卓越学院成长共同体平台</title>
+</head>
+<body>
+<header th:replace="community/header::header"></header>
+<div class="container-fluid">
+    <main class="tm-main">
+        <h2 class="tm-color-primary tm-post-title tm-mb-60">编辑共同体</h2>
+        <form method="POST" th:action="@{/community/save}" enctype="multipart/form-data">
+            <input type="hidden" name="id" th:value="${community.id}">
+            <div class="form-group">
+                <label for="title" class="col-form-label text-right tm-color-primary">标题</label>
+                <input class="form-control" name="title" id="title" type="text" required th:value="${community.title}">
+            </div>
+            <div class="form-group">
+                <label for="dsc" class="col-form-label text-right tm-color-primary">描述</label>
+                <input class="form-control" name="dsc" id="dsc" type="text" required th:value="${community.description}">
+            </div>
+            <div class="form-group">
+                <label for="file" class="col-form-label text-right tm-color-primary">替换封面</label>
+                <input class="form-control" name="file" id="file" type="file">
+            </div>
+            <div class="form-group">
+                <label for="typ" class="col-form-label text-right tm-color-primary">类别</label>
+                <select class="form-control mr-0 ml-auto" name="typ" id="typ" type="text">
+                    <option th:each="type:${types}"
+                            th:text="${type.name}"
+                            th:value="${type.id}"
+                            th:selected="${type.id}==${community.type.id}"></option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="lmt" class="col-form-label text-right tm-color-primary">人数限制</label>
+                <input class="form-control" name="lmt" id="lmt" type="number"
+                       th:value="${community.lmt}" required>
+                <p>输入0表示无人数限制</p>
+            </div>
+            <div class="form-group">
+                <label for="detail" class="col-form-label text-right tm-color-primary">正文</label>
+                <textarea class="form-control mr-0 ml-auto" id="detail" name="detail" required rows="12"
+                          th:replace="components/markdown::markdown(${community.detail})"></textarea>
+            </div>
+            <div class="form-group text-right">
+                <button class="tm-btn tm-btn-primary tm-btn-small">提交</button>
+            </div>
+        </form>
+    </main>
+</div>
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/templatemo-script.js}"></script>
+<div th:replace="components/markdown::script"></div>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="components/head::head('详情 - 卓越学院学习分享平台')">
+    <title>详情 - 卓越学院学习分享平台</title>
+</head>
+<body>
+<div th:replace="components/header.html::header(0)"></div>
+<div class="container-fluid">
+    <main class="tm-main">
+        <div th:replace="components/search_form::search_form(show_add=false)"></div>
+        <div class="row tm-row">
+            <div class="col-lg-8 tm-post-col">
+                <div class="tm-post-full">
+                    <div class="mb-4">
+                        <hr class="tm-hr-primary tm-mb-45">
+                        <h2 class="pt-2 tm-color-primary tm-post-title" th:text="${content.title}"></h2>
+                        <ul class="tm-mb-40">
+                            <li th:utext="'类别：'+(${content.typ}==0?'资源分享':'通知公告')"></li>
+                            <li th:utext="'标签：'+${content.tag.name}"></li>
+                            <li th:if="${content.stat}==0">状态：等待审核</li>
+                            <li th:if="${content.stat}==2">状态：隐藏</li>
+                            <li th:text="'发布者：'+${content.usr.name}"></li>
+                            <li th:text="'发布时间：'+${#dates.format(content.tim, 'yyyy-MM-dd HH:mm')}"></li>
+                        </ul>
+                        <p th:utext="${detail}">
+                        </p>
+                    </div>
+                    <div th:if="${content.typ}==0">
+                        <h2 class="tm-color-primary tm-post-title">评论</h2>
+                        <div th:each="comment:${comments}">
+                            <div th:utext="${comment.detail}"></div>
+                            <span class="tm-color-primary" th:text="${comment.usr.name}+' '+${#dates.format(comment.tim, 'yyyy-MM-dd HH:mm')}"></span>
+                            <a th:href="@{/delcmt(id=${comment.id})}"
+                               th:if="${#authorization.expression('hasRole(''ADMIN'')')||#authentication.getName()==comment.usr.getUsername()}">删除</a>
+                            <hr class="tm-hr-primary tm-mb-45">
+                        </div>
+                        <form th:action="@{/commit_comment}" method="post">
+                            <h2 class="tm-color-primary tm-post-title mb-4">添加评论</h2>
+                            <input type="hidden" th:value="${content.id}" name="contentId">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            <div class="mb-4">
+                                <label for="detail"></label>
+                                <textarea style="width:100%;" class="form-control" name="detail" id="detail" rows="6"></textarea>
+                            </div>
+                            <div class="text-right">
+                                <button class="tm-btn tm-btn-primary tm-btn-small">发表</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <aside class="col-lg-4 tm-aside-col">
+                    <div class="tm-post-sidebar">
+                        <hr class="mb-3 tm-hr-primary">
+                        <h2 class="tm-mb-40 tm-post-title tm-color-primary">相关内容</h2>
+                    </div>
+                </aside>
+            </div>
+        </div>
+        <div th:replace="components/footer.html::footer"></div>
+    </main>
+</div>
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/templatemo-script.js}"></script>
+</body>
+</html>

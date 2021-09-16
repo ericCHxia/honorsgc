@@ -1,0 +1,72 @@
+<!--
+  ~ Copyright (c) 2020-2021 杭州电子科技大学卓越学院 All Rights Reserved.
+  ~ @ProjectName: honor
+  ~ @FileName: tags.html
+  ~ @Author: Eric
+  ~ @Version: 1.0
+  ~ @LastModified: 2021/9/15 下午1:55
+  -->
+
+<!doctype html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/template::head('标签管理 - 卓越平台管理中心')">
+    <title>标签管理 - 卓越平台管理中心</title>
+</head>
+
+<body class="user-select">
+<section class="container-fluid">
+    <header th:replace="admin/template::header(${user})">
+    </header>
+    <div class="row">
+        <aside th:replace="admin/template::sidebar(4)">
+        </aside>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-lg-10 col-md-offset-2 main" id="main">
+            <div class="row">
+                <div class="col-md-5">
+                    <h1 class="page-header">添加标签</h1>
+                    <form th:action="@{/commit_tag}" method="post" autocomplete="off">
+                        <div class="form-group">
+                            <label for="tagname">标签名称</label>
+                            <input type="text" id="tagname" name="tagname" class="form-control"
+                                   placeholder="在此处输入标签名称" required autocomplete="off">
+                            <span class="prompt-text">这将是它在站点上显示的名字。</span> </div>
+                        <button class="btn btn-primary" type="submit" name="submit">添加</button>
+                    </form>
+                </div>
+                <div class="col-md-7">
+                    <h1 class="page-header">管理</h1>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                            <tr>
+                                <th><span class="glyphicon glyphicon-paperclip"></span> <span class="visible-lg">编号</span></th>
+                                <th><span class="glyphicon glyphicon-file"></span> <span class="visible-lg">名称</span></th>
+                                <th><span class="glyphicon glyphicon-user"></span> <span class="visible-lg">创建人</span></th>
+                                <th><span class="glyphicon glyphicon-pushpin"></span> <span class="visible-lg">使用次数</span></th>
+                                <th><span class="glyphicon glyphicon-pencil"></span> <span class="visible-lg">操作</span></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="tag:${tags}">
+                                    <td th:text="${tag.id}"></td>
+                                    <td th:text="${tag.name}"></td>
+                                    <td th:text="${tag.usr.name}+'（'+${tag.usr.num}+'）'"></td>
+                                    <td th:text="${tag.count}"></td>
+                                    <td><a href="">修改</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--用户信息框-->
+<div th:replace="admin/template.html::user_info(${user})"></div>
+<!--密码修改模态框-->
+<div th:replace="admin/template.html::chang_pwd"></div>
+<script src="/static/js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}"></script>
+<script src="/static/js/admin-scripts.js" th:src="@{/js/admin-scripts.js}"></script>
+</body>
+</html>
