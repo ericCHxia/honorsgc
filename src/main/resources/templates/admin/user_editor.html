@@ -21,8 +21,9 @@
         </aside>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-lg-10 col-md-offset-2 main" id="main">
             <h1 class="page-header">编辑用户</h1>
-            <form action="" method="post">
+            <form th:action="@{/admin/user_save}" method="post">
                 <div class="form-group">
+                    <input type="hidden" th:value="${targetUser.id}" name="id">
                     <label for="num">学号：</label>
                     <input style="width:400px;" type="text" id="num" name="num" class="form-control" th:value="${targetUser.num}" required autocomplete="off">
                     <label for="clas">班级：</label>
@@ -37,11 +38,11 @@
                     <input style="width:400px;" type="text" id="qq" name="qq" class="form-control" th:value="${targetUser.qq}" autocomplete="off">
                     <label for="priv">权限：</label>
                     <select class="form-control" style="width: 200px" name="priv" id="priv" th:disabled="${user.privilege}!=2">
-                    <option value=0 th:selected="${targetUser.privilege==0}">
+                    <option value="0" th:selected="${targetUser.privilege==0}">
                     普通用户</option>
-                    <option value=1 th:selected="${targetUser.privilege==0}">
+                    <option value="1" th:selected="${targetUser.privilege==1}">
                     初级管理员</option>
-                    <option value=2 th:selected="${targetUser.privilege==0}">
+                    <option value="2" th:selected="${targetUser.privilege==2}">
                     高级管理员</option>
                     </select>
                     <label>密码：</label>

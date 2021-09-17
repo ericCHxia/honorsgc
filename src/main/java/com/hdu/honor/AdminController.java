@@ -16,6 +16,7 @@ import com.hdu.honor.community.CommunityService;
 import com.hdu.honor.community.type.CommunityTypeService;
 import com.hdu.honor.content.Content;
 import com.hdu.honor.content.ContentService;
+import com.hdu.honor.exception.HttpInvalidParameterException;
 import com.hdu.honor.exception.PageNotFindException;
 import com.hdu.honor.tag.TagService;
 import com.hdu.honor.user.User;
@@ -87,14 +88,58 @@ public class AdminController {
     @PostMapping("/user_save")
     public String userSave(Authentication authentication,
                            @RequestHeader(value = "Referer",defaultValue = "/admin/") String referer,
-                           HttpServletRequest request){
+                           @RequestParam(value = "id",required = false,defaultValue = "-1") Integer userId,
+                           HttpServletRequest request,
+                           Model model){
         User user = (User) authentication.getPrincipal();
-        user.setSubject(request.getParameter("subj"));
-        user.setCollege(request.getParameter("sch"));
-        user.setQq(request.getParameter("qq"));
-        user = userService.save(user);
-        flushUser(user);
-        return "redirect:"+referer;
+        User targetUser;
+        if (userId==-1){
+            targetUser=user;
+        }else{
+            targetUser=userService.getById(userId);
+        }
+        if (targetUser==null){
+            model.addAttribute("url",referer);
+            model.addAttribute("message","用户不存在");
+            return "redirection";
+        }
+        if (request.getParameter("num")!=null){
+            targetUser.setNum(request.getParameter("num"));
+        }
+        if (request.getParameter("subj")!=null){
+            targetUser.setSubject(request.getParameter("subj"));
+        }
+        if (request.getParameter("sch")!=null){
+            targetUser.setCollege(request.getParameter("sch"));
+        }
+        if (request.getParameter("qq")!=null){
+            targetUser.setQq(request.getParameter("qq"));
+        }
+        if (request.getParameter("clas")!=null){
+            targetUser.setClassId(request.getParameter("clas"));
+        }
+        if (request.getParameter("name")!=null){
+            targetUser.setName(request.getParameter("name"));
+        }
+        if (request.getParameter("priv")!=null){
+            int priv=Integer.parseInt(request.getParameter("priv"));
+            if (priv!=targetUser.getPrivilege()&&user.getPrivilege()!=2){
+                model.addAttribute("url",referer);
+                model.addAttribute("message","没有权限修改");
+                return "redirection";
+            }
+            if (priv<0||priv>2){
+                throw new HttpInvalidParameterException();
+            }
+            targetUser.setPrivilege(priv);
+        }
+        targetUser = userService.save(targetUser);
+        if (userId==-1){
+            flushUser(targetUser);
+        }
+        model.addAttribute("url",referer);
+        model.addAttribute("message","保存成功");
+        return "redirection";
     }
     @GetMapping("/download")
     public void download(HttpServletResponse response) throws IOException {
