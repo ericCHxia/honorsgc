@@ -61,7 +61,9 @@
             <span class="slider round"></span>
           </label>
           <label class="form-check-label">一周内免登录</label>
-          <label class="forgot-password"><a href="https://api.hduhelp.com/oauth/authorize?response_type=code&client_id=">数字杭电登录></a></label>
+          <label class="forgot-password">
+            <a th:href="@{https://api.hduhelp.com/oauth/authorize(response_type='code',client_id=${oauth2.id},redirect_uri='https://hduhonorsgc.cn/oauth2',state='33554432')}">数字杭电登录></a>
+          </label>
         </div>
         <br>
           <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
