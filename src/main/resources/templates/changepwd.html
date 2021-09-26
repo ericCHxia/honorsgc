@@ -45,13 +45,15 @@
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="login">
-                <h1>修改密码</h1>
+                <h1 th:unless="${user.password.equals('670b14728ad9902aecba32e22fa4f6bd')}">修改密码</h1>
+                <h1 th:if="${user.password.equals('670b14728ad9902aecba32e22fa4f6bd')}">设置密码</h1>
                 <!-- Loging form -->
                 <form method="POST" th:action="@{/commitpwd}" onsubmit="return checkForm()" enctype="multipart/form-data">
-                    <div class="form-group">
+                    <div class="form-group" th:unless="${user.password.equals('670b14728ad9902aecba32e22fa4f6bd')}">
                         <input type="password" class="form-control" id="password0" placeholder="原密码">
-                        <input type="hidden" id="password0_md5" name="pwd0">
                     </div>
+                    <input type="hidden" th:if="${user.password.equals('670b14728ad9902aecba32e22fa4f6bd')}" id="password0" value="000000">
+                    <input type="hidden" id="password0_md5" name="pwd0">
                     <div class="form-group">
                         <input type="password" class="form-control" id="password1" placeholder="新密码">
                     </div>
@@ -68,7 +70,7 @@
                             pwd0_md5.value=hex_md5(pwd0.value);// 把密码变为MD5
                             var pwd1 = document.getElementById('password1');
                             var pwd2 = document.getElementById('password2');
-                            if (pwd1.value==pwd2.value) {
+                            if (pwd1.value===pwd2.value) {
                                 var newp_md5 = document.getElementById('newp_md5')
                                 newp_md5.value=hex_md5(pwd2.value);// 把密码变为MD5
                                 return true;
