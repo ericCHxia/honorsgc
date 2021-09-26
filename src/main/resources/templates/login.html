@@ -45,7 +45,8 @@
             return true;
           }
         </script>
-        <div id="login_err" th:if="${param.error}"  th:text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}">用户名或者密码错误</div>
+        <div id="login_err" th:if="${param.error!=null&&session.SPRING_SECURITY_LAST_EXCEPTION!=null}"
+             th:text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}">用户名或者密码错误</div>
         <!-- Loging form -->
         <form method="POST" th:action="@{/verify}" onsubmit="checkForm()">
         <div class="form-group">
