@@ -39,7 +39,7 @@ public class HonorAuthenticationSuccessHandler extends SavedRequestAwareAuthenti
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         User user = (User) authentication.getPrincipal();
-        recordService.add(user,"hdu",true,request);
+        recordService.add(user,"pwd",true,request);
         super.onAuthenticationSuccess(request, response, authentication);
     }
 }

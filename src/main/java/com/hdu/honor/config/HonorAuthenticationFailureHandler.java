@@ -31,7 +31,7 @@ public class HonorAuthenticationFailureHandler extends SimpleUrlAuthenticationFa
         logger.debug("Login failed: "+userName);
         try {
             User user = userService.loadUserByUsername(userName);
-            recordService.add(user,"hdu",false,request);
+            recordService.add(user,"pwd",false,request);
         }catch (UsernameNotFoundException e){
             exception = new BadCredentialsException("学号不存在",exception);
             super.onAuthenticationFailure(request,response,exception);
