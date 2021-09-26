@@ -13,7 +13,7 @@ import javax.persistence.*;
 public class Tag {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     @Column(name = "tagname")
     private String name;
     @OneToOne(cascade = CascadeType.DETACH)
@@ -23,5 +23,13 @@ public class Tag {
     public Tag(User user,String name) {
         this.name = name;
         this.usr = user;
+    }
+
+    public BaseTag toBaseTag(){
+        BaseTag baseTag = new BaseTag();
+        baseTag.setName(name);
+        baseTag.setId(id);
+        baseTag.setUser(usr);
+        return baseTag;
     }
 }
