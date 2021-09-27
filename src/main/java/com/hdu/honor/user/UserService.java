@@ -6,6 +6,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,6 +30,9 @@ public class UserService implements UserDetailsService {
             throw new UsernameNotFoundException("学号不存在");
         }
         return user;
+    }
+    public User getByNum(String num){
+        return userRepository.getUserByNum(num);
     }
     public User getById(int id){
         return userRepository.getUserById(id);
@@ -56,5 +61,10 @@ public class UserService implements UserDetailsService {
     }
     public List<User> gets(List<Integer> userIds){
         return userRepository.findAllById(userIds);
+    }
+
+    public static void flushUser(User user){
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities()));
     }
 }

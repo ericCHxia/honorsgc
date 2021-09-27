@@ -13,7 +13,7 @@
 <div class="row tm-row" th:fragment="search_form(show_add)">
     <div class="col-12">
         <form method="GET" class="form-inline tm-mb-80 tm-search-form">
-            <input class="form-control tm-search-input" name="query" type="text" placeholder="Search..." aria-label="Search">
+            <input class="form-control tm-search-input" name="query" type="text" placeholder="Search..." aria-label="Search" th:value="${param.query}">
             <button class="tm-search-button" type="submit">
                 <i class="fas fa-search tm-search-icon" aria-hidden="true"></i>
             </button>

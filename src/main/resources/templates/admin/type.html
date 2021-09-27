@@ -24,10 +24,10 @@
             <div class="row">
                 <div class="col-md-5">
                     <h1 class="page-header">添加类型</h1>
-                    <form th:action="@{/commit_tag}" method="post" autocomplete="off">
+                    <form th:action="@{/admin/type/add}" method="post" autocomplete="off">
                         <div class="form-group">
-                            <label for="tagname">共同体类型</label>
-                            <input type="text" id="tagname" name="tagname" class="form-control"
+                            <label for="name">共同体类型</label>
+                            <input type="text" id="name" name="name" class="form-control"
                                    placeholder="在此处输入类型名称" required autocomplete="off">
                             <span class="prompt-text">这将是它在站点上显示的名字。</span> </div>
                         <button class="btn btn-primary" type="submit" name="submit">添加</button>
@@ -50,7 +50,10 @@
                                     <td th:text="${type.id}"></td>
                                     <td th:text="${type.name}"></td>
                                     <td th:text="${type.count}"></td>
-                                    <td><a href="">修改</a></td>
+                                    <td>
+                                        <a href="">修改 </a>
+                                        <a th:href="@{/admin/type/del/{id}(id=${type.id})}">删除</a>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>

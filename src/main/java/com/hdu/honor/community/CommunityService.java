@@ -68,6 +68,11 @@ public class CommunityService {
     public List<Integer> getIdsByParticipant(int id,List<Integer> type){
         return communityRepository.getCommunitiesIdByParticipantId(id,type);
     }
+
+    /**
+     * 保存/添加共同体
+     * @return 如果保存失败会返回null
+     */
     public Community save(Community community){
         return communityRepository.saveAndFlush(community);
     }
@@ -80,10 +85,10 @@ public class CommunityService {
     public Integer delete(int id){
         return communityRepository.deleteCommunityById(id);
     }
-    public Integer changeStates(Integer state,List<Integer> ids){
-        return communityRepository.updateStateByIds(state,ids);
-    }
     public Integer delete(List<Integer> ids){
         return communityRepository.deleteCommunitiesByIdIn(ids);
+    }
+    public Integer changeStates(Integer state,List<Integer> ids){
+        return communityRepository.updateStateByIds(state,ids);
     }
 }

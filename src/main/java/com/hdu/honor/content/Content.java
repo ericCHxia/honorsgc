@@ -14,7 +14,6 @@ import java.util.List;
 @Data
 @Entity
 @Table(name="contents")
-@NoArgsConstructor
 public class Content {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -26,7 +25,7 @@ public class Content {
     @ManyToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "tag")
     private Tag tag;
-    private Timestamp tim;
+    private Date tim;
     private String title;
     private String dsc;
     private String detail="";
@@ -41,6 +40,11 @@ public class Content {
         this.title = title;
         this.dsc = dsc;
         this.detail = detail;
-        this.tim = new Timestamp(new Date().getTime());
+        this.tim = new Date();
+    }
+
+    public Content() {
+        this.tim = new Date();
+        this.stat = 0;
     }
 }

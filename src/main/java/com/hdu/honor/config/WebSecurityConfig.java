@@ -70,7 +70,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         //配置浏览范围
-        http.authorizeRequests().antMatchers("/login","/css/**","/js/**","/img/**").permitAll()
+        http.authorizeRequests().antMatchers("/login","/css/**","/js/**","/img/**","/oauth2").permitAll()
                 .anyRequest().authenticated();
         //登录配置
         http.formLogin().loginPage("/login")

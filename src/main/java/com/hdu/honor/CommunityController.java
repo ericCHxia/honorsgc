@@ -16,6 +16,7 @@ import com.hdu.honor.community.record.CommunityRecord;
 import com.hdu.honor.community.record.CommunityRecordService;
 import com.hdu.honor.community.type.CommunityType;
 import com.hdu.honor.community.type.CommunityTypeService;
+import com.hdu.honor.config.PageSizeConfig;
 import com.hdu.honor.exception.HttpForbiddenException;
 import com.hdu.honor.exception.HttpInvalidParameterException;
 import com.hdu.honor.exception.PageNotFindException;
@@ -59,6 +60,8 @@ public class CommunityController {
     private UserService userService;
     @Autowired
     private CommunityRecordService recordService;
+    @Autowired
+    private PageSizeConfig pageSizeConfig;
     //Markdown解析器
     private final HtmlRenderer renderer ;
     private final Parser parser;
@@ -122,7 +125,7 @@ public class CommunityController {
             Predicate[] predicates = new Predicate[list.size()];
             return cb.and(list.toArray(predicates));
         };
-        Page<Community> page=communityService.getAll(pageNumber,10,spec);
+        Page<Community> page=communityService.getAll(pageNumber,pageSizeConfig.getCommunity(),spec);
         List<CommunityType> types = typeService.getAll();
         model.addAttribute("title",title);
         model.addAttribute("page",page);

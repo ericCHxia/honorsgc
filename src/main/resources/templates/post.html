@@ -24,16 +24,30 @@
                             <li th:text="'发布者：'+${content.usr.name}"></li>
                             <li th:text="'发布时间：'+${#dates.format(content.tim, 'yyyy-MM-dd HH:mm')}"></li>
                         </ul>
-                        <p th:utext="${detail}">
-                        </p>
+                        <article  id="editormd-view">
+                            <textarea style="display: none" th:text="${content.detail}" id="append-test"></textarea>
+                        </article>
+                    </div>
+                    <div class="row tm-row tm-mt-100 tm-mb-75" th:if="${#authorization.expression('hasRole(''ADMIN'')')||#authentication.getName()==content.usr.getUsername()}">
+                        <div class="tm-prev-next-wrapper">
+                            <a th:href="@{/edit/{id}(id=${content.id})}"
+                               class="mb-2 tm-btn tm-btn-primary tm-prev-next">编辑</a>
+                            <a class="mb-2 tm-btn tm-btn-primary tm-prev-next"
+                               onClick="if(!confirm('删除后将不可恢复，是否继续？'))return false;"
+                               th:href="@{/del/{id}(id=${content.id})}">删除</a>
+
+                            <a th:href="@{/change/{id}(id=${content.id})}" class="mb-2 tm-btn tm-btn-primary tm-prev-next" sec:authorize="hasRole('ADMIN')" th:if="${content.stat}==0">通过审核</a>
+                            <a th:href="@{/change/{id}(id=${content.id})}" class="mb-2 tm-btn tm-btn-primary tm-prev-next" sec:authorize="hasRole('ADMIN')" th:if="${content.stat}==1">隐藏</a>
+                            <a th:href="@{/change/{id}(id=${content.id})}" class="mb-2 tm-btn tm-btn-primary tm-prev-next" sec:authorize="hasRole('ADMIN')" th:if="${content.stat}==2">显示</a>
+                        </div>
                     </div>
                     <div th:if="${content.typ}==0">
                         <h2 class="tm-color-primary tm-post-title">评论</h2>
                         <div th:each="comment:${comments}">
                             <div th:utext="${comment.detail}"></div>
                             <span class="tm-color-primary" th:text="${comment.usr.name}+' '+${#dates.format(comment.tim, 'yyyy-MM-dd HH:mm')}"></span>
-                            <a th:href="@{/delcmt(id=${comment.id})}"
-                               th:if="${#authorization.expression('hasRole(''ADMIN'')')||#authentication.getName()==comment.usr.getUsername()}">删除</a>
+                            <a th:href="@{/delcmt(id=${content.id})}"
+                               th:if="${#authorization.expression('hasRole(''ADMIN'')')||#authentication.getName()==content.usr.getUsername()}">删除</a>
                             <hr class="tm-hr-primary tm-mb-45">
                         </div>
                         <form th:action="@{/commit_comment}" method="post">
@@ -63,5 +77,33 @@
 </div>
 <script th:src="@{/js/jquery.min.js}"></script>
 <script th:src="@{/js/templatemo-script.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/editormd.min.js"  th:src="@{/lib/editor/editormd.min.js}"></script>
+<script th:src="@{/lib/editor/lib/marked.min.js}"></script>
+<script th:src="@{/lib/editor/lib/prettify.min.js}"></script>
+<script th:src="@{/lib/editor/lib/raphael.min.js}"></script>
+<script th:src="@{/lib/editor/lib/underscore.min.js}"></script>
+<script th:src="@{/lib/editor/lib/sequence-diagram.min.js}"></script>
+<script th:src="@{/lib/editor/lib/flowchart.min.js}"></script>
+<script th:src="@{/lib/editor/lib/jquery.flowchart.min.js}"></script>
+<script type="text/javascript">
+    var editormdView
+    $(function() {
+        editormd.emoji = {
+            path: "https://cdn.jsdelivr.net/npm/emoji-cst/graphics/emojis/",
+            ext: ".png"
+        }
+        editormd.twemoji = {
+            path: "https://cdn.staticfile.org/twemoji/13.1.0/svg/",
+            ext: ".svg"
+        }
+        editormdView = editormd.markdownToHTML("editormd-view", {
+            emoji           : true,
+            taskList        : true,
+            tex             : true,  // 默认不解析
+            flowChart       : true,  // 默认不解析
+            sequenceDiagram : true,  // 默认不解析
+        });
+    });
+</script>
 </body>
 </html>

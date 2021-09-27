@@ -4,5 +4,15 @@
       "name": "com.hdu.honor.image.path",
       "type": "java.lang.String",
       "description": "Description for com.hdu.honor.image.path."
-  }
-] }
+    },
+    {
+      "name": "com.hdu.honor.oauth2.client.id",
+      "type": "java.lang.String",
+      "description": "Description for com.hdu.honor.oauth2.client.id."
+    },
+    {
+      "name": "com.hdu.honor.page-size.content",
+      "type": "java.lang.Integer",
+      "description": "Description for com.hdu.honor.page-size.content."
+    }
+  ] }

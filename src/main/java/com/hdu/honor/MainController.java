@@ -12,6 +12,8 @@ package com.hdu.honor;
 
 import com.hdu.honor.comment.Comment;
 import com.hdu.honor.comment.CommentService;
+import com.hdu.honor.community.Community;
+import com.hdu.honor.config.PageSizeConfig;
 import com.hdu.honor.content.Content;
 import com.hdu.honor.content.ContentService;
 import com.hdu.honor.exception.HttpInvalidParameterException;
@@ -31,13 +33,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +57,8 @@ public class MainController {
     private TagService tagService;
     @Autowired
     private ImgService imgService;
+    @Autowired
+    private PageSizeConfig pageSizeConfig;
 
     private final Logger logger = LoggerFactory.getLogger(MainController.class);
 
@@ -65,24 +72,40 @@ public class MainController {
         renderer = HtmlRenderer.builder(options).build();
     }
 
-    @GetMapping({"/", "/index.html","/index"})
+    @GetMapping({"/", "/index.html","/index","/notice","/source"})
     public String index(Model model,
-                        @RequestParam(value = "page",required = false,defaultValue = "0") Integer pageNumber,
-                        @RequestParam(value = "type",required = false,defaultValue = "-1") Integer type){
-        List<Integer> types = new ArrayList<>();
-        types.add(type);
-        Page<Content> page=contentService.getPage(pageNumber,3,types);
-        int totalPage=page.getTotalPages();
-        if (totalPage<=pageNumber){
-            throw new PageNotFindException();
-        }
+                        HttpServletRequest request,
+                        Authentication authentication,
+                        @RequestParam(value = "query",required = false,defaultValue = "") String search,
+                        @RequestParam(value = "page",required = false,defaultValue = "0") Integer pageNumber){
+        User user = (User) authentication.getPrincipal();
         String title;
         int op;
+        int type = -1;
+        String url = request.getRequestURI();
+        if (url.startsWith("/notice"))type = 1;
+        if (url.startsWith("/source"))type = 0;
         switch (type){
             case 0:title="资源分享";op=2;break;
             case 1:title="通知公告";op=1;break;
             default:title="全部";op=0;
         }
+        int finalType = type;
+        Specification<Content> spec = (root, query, cb) ->{
+            List<Predicate> list = new ArrayList<>();
+            if (finalType == 0|| finalType == 1)list.add(cb.equal(root.get("typ"), finalType));
+            list.add(cb.or(cb.equal(root.get("stat"),1),cb.equal(root.get("usr"),user)));
+            if (!search.equals(""))list.add(cb.like(root.get("title"),"%"+search+"%"));
+            Predicate[] predicates = new Predicate[list.size()];
+            return cb.and(list.toArray(predicates));
+        };
+
+        Page<Content> page=contentService.getPage(pageNumber,pageSizeConfig.getContent(),spec);
+        int totalPage=page.getTotalPages();
+        if (totalPage<=pageNumber){
+            throw new PageNotFindException();
+        }
+
         model.addAttribute("title",title+" - 卓越学院学习分享平台");
         model.addAttribute("contents",page.getContent());
         model.addAttribute("totalPage",totalPage);
@@ -97,31 +120,69 @@ public class MainController {
                        Authentication authentication){
         Content content=contentService.getContentById(id);
         User user = (User) authentication.getPrincipal();
-        logger.info(user.toString());
-        logger.info(user.getAuthorities().toString());
-        if (content==null){
+        if (content==null||content.getStat()!=1&&user.getPrivilege()==0&&!user.equals(content.getUsr())){
             throw new PageNotFindException();
         }
         Node document = parser.parse(content.getDetail());
         model.addAttribute("detail",renderer.render(document));
         model.addAttribute("content",content);
+        model.addAttribute("user",user);
         model.addAttribute("comments",commentService.getByContentId(content.getId()));
         return "post";
     }
 
     @GetMapping("/edit/{id}")
-    public String edit(@PathVariable Integer id,Model model){
-        throw new PageNotFindException();
+    public String edit(@PathVariable Integer id,Model model,Authentication authentication){
+        Content content = contentService.getContentById(id);
+        if (content == null){
+            throw new PageNotFindException();
+        }
+        User user = (User) authentication.getPrincipal();
+        if (user.getId()!=content.getUsr().getId()&&user.getPrivilege()==0){
+            throw new PageNotFindException();
+        }
+        model.addAttribute("content",content);
+        model.addAttribute("tags",tagService.getAll());
+        return "editmd";
     }
 
     @GetMapping("/del/{id}")
-    public String deleteContent(@PathVariable Integer id,Model model){
-        throw new PageNotFindException();
+    public String deleteContent(Authentication authentication,
+                                @PathVariable Integer id,
+                                Model model,
+                                @RequestHeader(value = "Referer",defaultValue = "/") String referer){
+        Content content = contentService.getContentById(id);
+        if (content == null){
+            throw new PageNotFindException();
+        }
+        User user = (User) authentication.getPrincipal();
+        if (user.getId()!=content.getUsr().getId()&&user.getPrivilege()==0){
+            throw new PageNotFindException();
+        }
+
+        try {
+            contentService.delete(id);
+            if (referer.contains("/post"))model.addAttribute("url","/");
+            else model.addAttribute("url",referer);
+            model.addAttribute("message","删除成功");
+        }catch (Exception e){
+            model.addAttribute("url",referer);
+            model.addAttribute("message",e.getMessage());
+        }
+        return "redirection";
     }
 
     @GetMapping("/change/{id}")
-    public String changeContentState(@PathVariable Integer id, Mode model){
-        throw new PageNotFindException();
+    @PreAuthorize("hasRole('ADMIN')")
+    public String changeContentState(@PathVariable Integer id, Model model,
+                                     @RequestHeader(value = "Referer",defaultValue = "/") String referer){
+        Content content =contentService.getContentById(id);
+        if (content.getStat()==0||content.getStat()==2)content.setStat(1);
+        else content.setStat(2);
+        contentService.save(content);
+        model.addAttribute("url",referer);
+        model.addAttribute("message","修改成功");
+        return "redirection";
     }
 
     @GetMapping("/delcmt")
@@ -171,19 +232,39 @@ public class MainController {
     @PostMapping("/commit")
     public String commit_content(Authentication authentication,
                                  HttpServletRequest request,
-                                 @RequestHeader(value = "Referer",defaultValue = "") String referer){
+                                 @RequestHeader(value = "Referer",defaultValue = "/") String referer,
+                                 Model model){
         User user = (User) authentication.getPrincipal();
-        String title = request.getParameter("title");
-        String describe = request.getParameter("dsc");
-        int type= Integer.parseInt(request.getParameter("typ"));
-        int tagId = Integer.parseInt(request.getParameter("tag"));
-        String detail = request.getParameter("detail");
-        Content content = contentService.save(user,title,describe,detail,type,tagId);
-        if (content!=null){
-            if (referer.equals(""))return "redirect:/";
-            else return "redirect:"+referer;
+        Content content;
+        if (request.getParameter("id")==null){
+            content = new Content();
+            content.setUsr(user);
+        }else {
+            try {
+                content = contentService.getContentById(Integer.parseInt(request.getParameter("id")));
+                if (user.getId()!=content.getUsr().getId()&&user.getPrivilege()==0){
+                    throw new Error("您没有权限修改哦");
+                }
+            }catch (Exception e){
+                model.addAttribute("url",referer);
+                model.addAttribute("message",e.getMessage());
+                return "redirection";
+            }
         }
-        throw new HttpInvalidParameterException();
+        content.setTitle(request.getParameter("title"));
+        content.setDsc(request.getParameter("dsc"));
+        content.setTyp(Integer.parseInt(request.getParameter("typ")));
+        content.setTag(tagService.get(Integer.parseInt(request.getParameter("tag"))));
+        content.setDetail(request.getParameter("detail"));
+        content = contentService.save(content);
+        if (content!=null){
+            model.addAttribute("url",String.format("/post/%d",content.getId()));
+            model.addAttribute("message","保存成功");
+            return "redirection";
+        }
+        model.addAttribute("url","/");
+        model.addAttribute("message","保存失败");
+        return "redirection";
     }
 
     @PostMapping("/commit_tag")

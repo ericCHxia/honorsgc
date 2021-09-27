@@ -18,11 +18,26 @@ import java.util.List;
 public class CommunityTypeService {
     @Autowired
     private CommunityTypeRepository communityTypeRepository;
+    @Autowired
+    private BaseCommunityTypeRepository baseCommunityTypeRepository;
     public CommunityType get(int id){
         return communityTypeRepository.getCommunityTypeById(id);
     }
     public List<CommunityType> getAll(){
         return communityTypeRepository.findAll();
+    }
+    public CommunityType save(CommunityType type) throws CommunityTypeNameExistException {
+        if (type.getId()==null&&communityTypeRepository.getCommunityTypeByName(type.getName())!=null){
+            throw new CommunityTypeNameExistException();
+        }
+        BaseCommunityType baseCommunityType = baseCommunityTypeRepository.saveAndFlush(type.toBaseCommunityType());
+        return get(baseCommunityType.getId());
+    }
+    public void delete(CommunityType type){
+        baseCommunityTypeRepository.delete(type.toBaseCommunityType());
+    }
+    public void delete(Integer id){
+        baseCommunityTypeRepository.deleteById(id);
     }
 }
 

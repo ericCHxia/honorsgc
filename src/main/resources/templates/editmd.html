@@ -11,7 +11,7 @@
 <html  lang="zh" xmlns:th="http://www.thymeleaf.org"
        xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="components/head.html::head('新建 - 卓越学院学习分享平台')">
-    <title>新建 - 卓越学院学习分享平台</title>
+    <title>编辑 - 卓越学院学习分享平台</title>
 </head>
 <body>
 <header th:replace="components/header.html::header(0)"></header>
@@ -19,33 +19,39 @@
     <main class="tm-main">
         <h2 class="tm-color-primary tm-post-title">新建分享</h2>
         <form method="POST" th:action="@{/commit}" enctype="multipart/form-data">
+            <input type="hidden" name="id" th:value="${content.id}">
             <div class="form-group">
                 <label for="title" class="col-form-label tm-color-primary">标题</label>
-                <input name="title" type="text" id="title" required class="form-control">
+                <input name="title" type="text" id="title" required
+                       class="form-control" th:value="${content.title}">
             </div>
             <div class="form-group" >
                 <label for="dsc" class="col-form-label tm-color-primary">描述</label>
-                <input name="dsc" type="text" id="dsc" required class="form-control">
+                <input name="dsc" type="text" id="dsc" required
+                       class="form-control" th:value="${content.dsc}">
             </div>
             <div class="form-group">
                 <label for="typ" class="col-form-label tm-color-primary">类别</label>
                 <select name="typ" id="typ" type="text" class="form-control">
-                    <option value=0>资源分享</option>
-                    <option value=1 sec:authorize="hasRole('ADMIN')">通知公告</option>
+                    <option value=0
+                            th:selected="${content.typ}==0">资源分享</option>
+                    <option value=1
+                            sec:authorize="hasRole('ADMIN')"
+                            th:selected="${content.typ}==1">通知公告</option>
                 </select>
             </div>
             <div class="form-group">
                 <label for="tag" class="col-form-label tm-color-primary">标签</label>
                 <div>
                     <select class="form-control" name="tag" id="tag" type="text">
-                        <option th:each="tag:${tags}" th:value="${tag.id}" th:text="${tag.name}"></option>
+                        <option th:each="tag:${tags}" th:value="${tag.id}" th:text="${tag.name}" th:selected="${content.tag.id==tag.id}"></option>
                     </select>
                     <p>（没有想要的标签？试试<a th:href="@{/add_tag}">新建标签</a>）</p>
                 </div>
             </div>
             <div class="form-group">
                 <label for="detail" class="col-form-label tm-color-primary">正文</label>
-                <textarea name="detail" id="detail" rows="12" required th:replace="components/markdown::markdown('')"></textarea>
+                <textarea name="detail" id="detail" rows="12" required th:replace="components/markdown::markdown(${content.detail})"></textarea>
             </div>
             <div class="form-group row text-right">
                 <button class="tm-btn tm-btn-primary tm-btn-small">提交</button>

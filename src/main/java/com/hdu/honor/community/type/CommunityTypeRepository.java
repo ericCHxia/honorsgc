@@ -13,4 +13,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CommunityTypeRepository extends JpaRepository<CommunityType, Integer> {
     CommunityType getCommunityTypeById(int id);
+    CommunityType getCommunityTypeByName(String name);
 }

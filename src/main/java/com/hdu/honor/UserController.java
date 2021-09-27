@@ -9,6 +9,7 @@
 
 package com.hdu.honor;
 
+import com.hdu.honor.config.Oauth2Config;
 import com.hdu.honor.content.Content;
 import com.hdu.honor.content.ContentService;
 import com.hdu.honor.user.User;
@@ -33,9 +34,11 @@ public class UserController {
     private ContentService contentService;
     @Autowired
     private UserService userService;
-
+    @Autowired
+    private Oauth2Config oauth2Config;
     @GetMapping("/login")
-    public String userLogin(){
+    public String userLogin(Model model){
+        model.addAttribute("oauth2",oauth2Config);
         return "login";
     }
 
@@ -50,22 +53,24 @@ public class UserController {
     }
 
     @GetMapping("/changepwd")
-    public String changepwd(Model model){
+    public String changepwd(Authentication authentication, Model model){
+        User user = (User) authentication.getPrincipal();
+        model.addAttribute("user",user);
         return "changepwd";
     }
 
     @PostMapping("/commitpwd")
     public String commitPwd(Authentication authentication,
                             HttpServletRequest request,
-                            Model model,
-                            @RequestHeader(value = "Referer",defaultValue = "/user") String referer){
+                            Model model){
         User user = (User) authentication.getPrincipal();
         String oldPassword = request.getParameter("pwd0");
         String newPassword = request.getParameter("npwd");
-        model.addAttribute("url",referer);
+        model.addAttribute("url","/");
         if (user.getPassword().equals(oldPassword)){
             user.setPwd(newPassword);
-            userService.save(user);
+            user = userService.save(user);
+            UserService.flushUser(user);
             model.addAttribute("message","修改成功");
         }else{
             model.addAttribute("message","密码错误");

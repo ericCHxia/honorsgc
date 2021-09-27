@@ -21,5 +21,12 @@ public class CommunityType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
-    private String count;
+    private Long count;
+
+    public BaseCommunityType toBaseCommunityType(){
+        BaseCommunityType baseCommunityType = new BaseCommunityType();
+        baseCommunityType.setId(id);
+        baseCommunityType.setName(name);
+        return baseCommunityType;
+    }
 }

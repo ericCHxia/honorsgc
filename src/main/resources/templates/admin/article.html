@@ -55,11 +55,11 @@
               <td class="hidden-sm" th:text="${content.comments.size()}"></td>
               <td class="hidden-sm" th:text="${#dates.format(content.tim, 'yyyy-MM-dd HH:mm')}"></td>
               <td>
-                <a th:if="${content.stat}==0">过审</a>
-                <a th:if="${content.stat}==1">隐藏</a>
-                <a th:if="${content.stat}==2">显示</a>
-                <a>编辑</a>
-                <a>删除</a>
+                <a th:href="@{/change/{id}(id=${content.id})}" th:if="${content.stat}==0">过审</a>
+                <a th:href="@{/change/{id}(id=${content.id})}" th:if="${content.stat}==1">隐藏</a>
+                <a th:href="@{/change/{id}(id=${content.id})}" th:if="${content.stat}==2">显示</a>
+                <a th:href="@{/edit/{id}(id=${content.id})}">编辑</a>
+                <a th:href="@{/del/{id}(id=${content.id})}">删除</a>
               </td>
             </tr>
           </tbody>

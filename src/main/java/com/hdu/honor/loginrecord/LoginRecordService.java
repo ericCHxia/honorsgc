@@ -10,6 +10,8 @@
 package com.hdu.honor.loginrecord;
 
 import com.hdu.honor.user.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +24,7 @@ import java.util.List;
 public class LoginRecordService {
     @Autowired
     private LoginRecordRepository repository;
-
+    private final Logger logger = LoggerFactory.getLogger(LoginRecordService.class);
     public List<LoginRecord> getByUser(User user){
         return getByUser(user.getId());
     }
@@ -47,7 +49,7 @@ public class LoginRecordService {
         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
         }
-        return ip;
+        return ip.split(",")[0];
     }
 
     public LoginRecord add(LoginRecord record){

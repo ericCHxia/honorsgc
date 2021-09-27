@@ -13,7 +13,9 @@ import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 import com.hdu.honor.community.Community;
 import com.hdu.honor.community.CommunityService;
+import com.hdu.honor.community.type.CommunityType;
 import com.hdu.honor.community.type.CommunityTypeService;
+import com.hdu.honor.config.PageSizeConfig;
 import com.hdu.honor.content.Content;
 import com.hdu.honor.content.ContentService;
 import com.hdu.honor.exception.HttpInvalidParameterException;
@@ -22,7 +24,6 @@ import com.hdu.honor.tag.TagService;
 import com.hdu.honor.user.User;
 import com.hdu.honor.user.UserAttend;
 import com.hdu.honor.user.UserService;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +38,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -67,6 +65,8 @@ public class AdminController {
     private TagService tagService;
     @Autowired
     private CommunityTypeService typeService;
+    @Autowired
+    private PageSizeConfig pageSizeConfig;
     @GetMapping({"/",""})
     public String index(Authentication authentication, Model model){
         User user = (User) authentication.getPrincipal();
@@ -80,10 +80,6 @@ public class AdminController {
         model.addAttribute("sys_name",System.getProperty("os.name"));
         model.addAttribute("sys_arch",System.getProperty("os.arch"));
         return "admin/index";
-    }
-    private void flushUser(User user){
-        SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities()));
     }
     @PostMapping("/user_save")
     public String userSave(Authentication authentication,
@@ -135,7 +131,7 @@ public class AdminController {
         }
         targetUser = userService.save(targetUser);
         if (userId==-1){
-            flushUser(targetUser);
+            UserService.flushUser(targetUser);
         }
         model.addAttribute("url",referer);
         model.addAttribute("message","保存成功");
@@ -157,7 +153,7 @@ public class AdminController {
         User user = (User) authentication.getPrincipal();
         List<Integer> types = new ArrayList<>();
         types.add(0);
-        Page<Content> page=contentService.getPage(pageNumber,2,types);
+        Page<Content> page=contentService.getPage(pageNumber,pageSizeConfig.getAdmin(),types);
         model.addAttribute("title","文章管理 - 卓越平台管理中心");
         model.addAttribute("op",1);
         model.addAttribute("user",user);
@@ -171,7 +167,7 @@ public class AdminController {
         User user = (User) authentication.getPrincipal();
         List<Integer> types = new ArrayList<>();
         types.add(1);
-        Page<Content> page=contentService.getPage(pageNumber,2,types);
+        Page<Content> page=contentService.getPage(pageNumber,pageSizeConfig.getAdmin(),types);
         model.addAttribute("title","公告管理 - 卓越平台管理中心");
         model.addAttribute("op",2);
         model.addAttribute("user",user);
@@ -201,7 +197,7 @@ public class AdminController {
             Predicate[] predicates = new Predicate[list.size()];
             return cb.and(list.toArray(predicates));
         };
-        Page<Community> page=communityService.getAll(pageNumber,10,spec);
+        Page<Community> page=communityService.getAll(pageNumber,pageSizeConfig.getAdmin(),spec);
         model.addAttribute("page",page);
         model.addAttribute("communities",page.getContent());
         return "admin/community";
@@ -239,7 +235,7 @@ public class AdminController {
             Predicate[] predicates = new Predicate[predicateList.size()];
             return criteriaBuilder.and(predicateList.toArray(predicates));
         };
-        Page<UserAttend> page=userService.getAllAttends(pageNumber,10,specification);
+        Page<UserAttend> page=userService.getAllAttends(pageNumber,pageSizeConfig.getAdmin(),specification);
         model.addAttribute("page",page);
         model.addAttribute("users",page.getContent());
         return "admin/manage-user";
@@ -271,6 +267,27 @@ public class AdminController {
         model.addAttribute("user",user);
         model.addAttribute("types",typeService.getAll());
         return "admin/type";
+    }
+    @PostMapping("/type/add")
+    public String typeAdd(Model model,@RequestParam("name") String name){
+        CommunityType communityType = new CommunityType();
+        communityType.setName(name);
+        try {
+            typeService.save(communityType);
+            model.addAttribute("url","/admin/type");
+            model.addAttribute("message","添加成功");
+        }catch (Exception exception){
+            model.addAttribute("url","/admin/type");
+            model.addAttribute("message",exception.getMessage());
+        }
+        return "redirection";
+    }
+    @GetMapping("/type/del/{id}")
+    public String typeDelete(@PathVariable Integer id,Model model){
+        typeService.delete(id);
+        model.addAttribute("url","/admin/type");
+        model.addAttribute("message","删除成功");
+        return "redirection";
     }
     @GetMapping("/user/editor/{id}")
     public String userEditor(Model model,

@@ -1,5 +1,6 @@
 package com.hdu.honor.content;
 
+import com.hdu.honor.community.Community;
 import com.hdu.honor.tag.Tag;
 import com.hdu.honor.tag.TagService;
 import com.hdu.honor.user.User;
@@ -8,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +52,13 @@ public class ContentService {
         Sort sort = Sort.by(Sort.Direction.DESC,"tim");
         Pageable pageable = PageRequest.of(pageNumber,pageSize,sort);
         return contentRepository.findAllByTypIn(pageable,types);
+    }
+
+    public Page<Content> getPage(int pageNumber,int pageSize,Specification<Content> specification) {
+        //TODO: 现在只实现了按照时间逆序，还需要实现置顶
+        Sort sort = Sort.by(Sort.Direction.DESC,"tim");
+        Pageable pageable = PageRequest.of(pageNumber,pageSize,sort);
+        return contentRepository.findAll(specification,pageable);
     }
 
     /**
