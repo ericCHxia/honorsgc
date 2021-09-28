@@ -80,7 +80,7 @@
                            th:text="${community.isManager(user)}?'取消指导':'我要指导'"
                            th:unless="${community.isParticipant(user)}"></a>
                         <a class="mb-2 tm-btn tm-btn-primary tm-prev-next"
-                           th:href="@{/community/export(id=${community.id})}">导出参与者名单</a>
+                           th:href="@{/community/export/{id}(id=${community.id})}">导出参与者名单</a>
                         <a class="mb-2 tm-btn tm-btn-primary tm-prev-next"
                            th:href="@{/community/change_state(id=${community.id})}"
                            th:text="${community.state==0}?'通过审核':(${community.state==1}?'隐藏':'显示')"
