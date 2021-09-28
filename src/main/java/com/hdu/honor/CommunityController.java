@@ -9,8 +9,11 @@
 
 package com.hdu.honor;
 
+import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 import com.hdu.honor.community.Community;
 import com.hdu.honor.community.CommunityService;
+import com.hdu.honor.community.CommunityUserAttend;
 import com.hdu.honor.community.participant.Participant;
 import com.hdu.honor.community.record.CommunityRecord;
 import com.hdu.honor.community.record.CommunityRecordService;
@@ -43,13 +46,20 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Controller
 @RequestMapping("/community")
 public class CommunityController {
     private final Logger logger = LoggerFactory.getLogger(CommunityController.class);
+    private final SimpleDateFormat exportDateFormat = new SimpleDateFormat("yyyyMMdd");
     @Autowired
     private CommunityService communityService;
     @Autowired
@@ -369,5 +379,24 @@ public class CommunityController {
         }
 
         return "redirection";
+    }
+    @GetMapping("/export/{id}")
+    public void exportCommunity(Authentication authentication,HttpServletResponse response,@PathVariable("id") Integer id) throws IOException {
+        Community community = communityService.get(id);
+        User user = (User) authentication.getPrincipal();
+
+        if (user.getPrivilege()==0&&!user.equals(community.getUser())&&!community.isManager(user)){
+            throw new HttpForbiddenException();
+        }
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setCharacterEncoding("utf-8");
+        String timeString = exportDateFormat.format(new Date());
+        String fileName = URLEncoder.encode(community.getTitle()+"个人考勤表"+timeString, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
+        response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
+        List<CommunityUserAttend> communityUserAttends = communityService.getAttend(community);
+        EasyExcel.write(response.getOutputStream(), CommunityUserAttend.class)
+                .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
+                .sheet("考勤表").doWrite(communityUserAttends);
     }
 }

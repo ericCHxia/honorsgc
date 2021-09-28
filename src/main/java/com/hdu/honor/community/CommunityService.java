@@ -32,6 +32,8 @@ public class CommunityService {
     private CommunityUserRepository userRepository;
     @Autowired
     private CommunityTypeService typeService;
+    @Autowired
+    private CommunityUserAttendRepository communityUserAttendRepository;
     public List<Community> getByUserId(int id){
         return communityRepository.getAllByUserId(id);
     }
@@ -68,7 +70,6 @@ public class CommunityService {
     public List<Integer> getIdsByParticipant(int id,List<Integer> type){
         return communityRepository.getCommunitiesIdByParticipantId(id,type);
     }
-
     /**
      * 保存/添加共同体
      * @return 如果保存失败会返回null
@@ -90,5 +91,9 @@ public class CommunityService {
     }
     public Integer changeStates(Integer state,List<Integer> ids){
         return communityRepository.updateStateByIds(state,ids);
+    }
+
+    public List<CommunityUserAttend> getAttend(Community community){
+        return communityUserAttendRepository.findCommunityUserAttendsByCommunity(community);
     }
 }

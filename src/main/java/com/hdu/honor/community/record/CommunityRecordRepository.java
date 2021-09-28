@@ -9,10 +9,8 @@
 
 package com.hdu.honor.community.record;
 
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.sql.Date;
 import java.util.List;
 
 public interface CommunityRecordRepository extends JpaRepository<CommunityRecord, Integer> {
