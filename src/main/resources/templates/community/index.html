@@ -38,11 +38,13 @@
         </div>
 
         <div class="row tm-row">
-            <article class="col-12 col-md-6 tm-post" th:each="community:${page.getContent()}">
+            <article class="col-4 col-md-4 tm-post" th:each="community:${page.getContent()}">
                 <hr class="tm-hr-primary">
-                <a th:href="@{/community/post/{id}(id=${community.id})}" class="effect-lily tm-post-link tm-pt-60">
-                    <div class="tm-post-link-inner">
-                        <img th:src="${community.img!=null}?('/upload/img/'+${community.img}):'/img/logo3.png'" class="img-fluid" alt="Image" src="" style="max-width: 500px;max-height: 500px;">
+                <a th:href="@{/community/post/{id}(id=${community.id})}" class="effect-lily tm-post-link tm-pt-30">
+                    <div class="tm-post-link-inner" style="height: 300px;">
+                        <img th:src="${community.img!=null}?('/upload/img/'+${community.img}):'/img/logo3.png'"
+                             class="img-fluid" alt="Image"
+                             src="" style="max-width: 300px;max-height: 300px;">
                     </div>
                     <span class="position-absolute tm-new-badge" th:if="${#dates.createNow().getTime()<community.getTim().getTime()+86400000}">新</span>
                     <h2 class="tm-pt-30 tm-color-primary tm-post-title" th:text="${community.title}"></h2>

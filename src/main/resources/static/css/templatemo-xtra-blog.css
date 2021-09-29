@@ -197,7 +197,7 @@ ul {
 
 .tm-post-link-inner {
     overflow: hidden;
-    background: #3085a3;
+    /*background: #3085a3;*/
 }
 
 .tm-post-link img {
@@ -216,7 +216,7 @@ ul {
 	-webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
 	transition: opacity 0.35s, transform 0.35s;
 	-webkit-transform: translate3d(-40px,0, 0);
-	transform: translate3d(-40px,0,0);
+	transform: translate3d(-10px,0,0);
 }
 
 .effect-lily:hover img { opacity: 1; }
