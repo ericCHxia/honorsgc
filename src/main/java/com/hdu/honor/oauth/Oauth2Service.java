@@ -35,33 +35,33 @@ public class Oauth2Service {
     RestTemplate restTemplate = new RestTemplate();
 
     public Oauth2TokenResponse getToken(String code) throws Oauth2TokenException {
-        logger.info("TOKEN: "+code);
+        logger.debug("TOKEN: "+code);
         Map<String,String> map = new HashMap<>();
         map.put("grant_type","authorization_code");
-        logger.info("TOKEN ID: "+oauth2Config.getId());
+        logger.debug("TOKEN ID: "+oauth2Config.getId());
         map.put("client_id",oauth2Config.getId());
         map.put("client_secret",oauth2Config.getSecret());
         map.put("code",code);
         Oauth2TokenResponse response = restTemplate.getForObject("https://api.hduhelp.com/oauth/token?grant_type={grant_type}&client_id={client_id}&client_secret={client_secret}&code={code}",
                 Oauth2TokenResponse.class,map);
         if (response==null){
-            logger.info("TOKEN: "+"response is None");
+            logger.debug("TOKEN: "+"response is None");
             throw new Oauth2TokenException("response is None");
         }
         if (response.getError()!=0){
-            logger.info("TOKEN: "+response.getMsg());
+            logger.debug("TOKEN: "+response.getMsg());
             throw new Oauth2TokenException(response.getMsg());
         }
         return response;
     }
 
     public Oauth2InfoResponse getInfo(String token) throws Oauth2InfoException{
-        logger.info("INFO: "+token);
+        logger.debug("INFO: "+token);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization","token "+token);
         ResponseEntity<Oauth2InfoResponse> response = restTemplate.exchange("https://api.hduhelp.com/base/student/info", HttpMethod.GET,new HttpEntity<String>(headers),Oauth2InfoResponse.class);
         if (response.getStatusCode()!= HttpStatus.OK){
-            logger.info("INFO: "+ Objects.requireNonNull(response.getBody()).getMsg());
+            logger.debug("INFO: "+ Objects.requireNonNull(response.getBody()).getMsg());
             throw new Oauth2InfoException(Objects.requireNonNull(response.getBody()).getMsg());
         }
         return response.getBody();
