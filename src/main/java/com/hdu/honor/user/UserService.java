@@ -62,6 +62,10 @@ public class UserService implements UserDetailsService {
     public List<User> gets(List<Integer> userIds){
         return userRepository.findAllById(userIds);
     }
+    public void resetPassword(User user){
+        user.setPwd("670b14728ad9902aecba32e22fa4f6bd");
+        save(user);
+    }
 
     public static void flushUser(User user){
         SecurityContextHolder.getContext().setAuthentication(

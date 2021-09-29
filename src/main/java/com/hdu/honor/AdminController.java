@@ -31,9 +31,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -251,6 +249,19 @@ public class AdminController {
         EasyExcel.write(response.getOutputStream(), UserAttend.class)
                 .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
                 .sheet("考勤表"+timeString).doWrite(userAttends);
+    }
+    @GetMapping("/usr/{id}/resetpwd")
+    public String resetPassword(Authentication authentication, @PathVariable("id")Integer id,Model model){
+        User user = (User) authentication.getPrincipal();
+        model.addAttribute("url","/admin/user/editor/"+ id);
+        User user1 = userService.getById(id);
+        if (user1.getPrivilege()>user.getPrivilege()){
+            model.addAttribute("message","没有权限哦");
+            return "redirection";
+        }
+        userService.resetPassword(user);
+        model.addAttribute("message","重置成功");
+        return "redirection";
     }
     @GetMapping("/tags")
     public String tagManage(Model model,

@@ -25,11 +25,19 @@
                 <div class="form-group">
                     <input type="hidden" th:value="${targetUser.id}" name="id">
                     <label for="num">学号：</label>
-                    <input style="width:400px;" type="text" id="num" name="num" class="form-control" th:value="${targetUser.num}" required autocomplete="off">
+                    <input style="width:400px;" type="text"
+                           id="num" name="num"
+                           class="form-control"
+                           th:value="${targetUser.num}" required autocomplete="off">
                     <label for="clas">班级：</label>
-                    <input style="width:400px;" type="text" id="clas" name="clas" class="form-control" th:value="${targetUser.classId}" required autocomplete="off">
+                    <input style="width:400px;" type="text"
+                           id="clas" name="clas"
+                           class="form-control"
+                           th:value="${targetUser.classId}" required autocomplete="off">
                     <label for="name">姓名：</label>
-                    <input style="width:400px;" type="text" id="name" name="name" class="form-control" th:value="${targetUser.name}" required autocomplete="off">
+                    <input style="width:400px;" type="text" id="name"
+                           name="name" class="form-control"
+                           th:value="${targetUser.name}" required autocomplete="off">
                     <label for="subj">专业：</label>
                     <input style="width:400px;" type="text" id="subj" name="subj" class="form-control" th:value="${targetUser.subject}" autocomplete="off">
                     <label for="sch">学院：</label>
@@ -46,9 +54,14 @@
                     高级管理员</option>
                     </select>
                     <label>密码：</label>
-                    <br><a><input type="button" class="btn btn-default" value='重设密码'></a>
+                    <br>
+                    <a th:href="@{/admin/usr/{id}/resetpwd(id=${targetUser.id})}">
+                        <input type="button" class="btn btn-default" value='重设密码'>
+                    </a>
                 </div>
-                <button class="btn btn-primary" type="submit" name="submit">保存</button>
+                <button class="btn btn-primary"
+                        type="submit"
+                        name="submit">保存</button>
             </form>
         </div>
     </div>
