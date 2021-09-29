@@ -12,7 +12,7 @@ target/
 .settings
 .springBeans
 .sts4-cache
-.psd
+*.psd
 
 ### IntelliJ IDEA ###
 .idea

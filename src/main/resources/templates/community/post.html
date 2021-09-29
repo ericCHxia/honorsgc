@@ -21,8 +21,16 @@
         <!-- Search form -->
         <div class="row tm-row">
             <div class="col-12">
-                <form method="GET" class="form-inline tm-mb-80 tm-search-form" th:action="@{/community}">
-                    <input class="form-control tm-search-input" name="search" type="text" placeholder="Search..." aria-label="Search">
+                <form method="GET" class="form-inline tm-mb-40 tm-search-form" th:href="@{/community}">
+                    <a th:href="@{/community/add}" class="tm-btn tm-btn-primary tm-prev-next mr-3">新建</a>
+                    <select class="form-control tm-search-input" style="width: 150px" name="typ" id="typ" type="text">
+                        <option value="-1">全部</option>
+                        <option th:each="type:${types}"
+                                th:selected="${#strings.equals(type.id,param.typ)}"
+                                th:text="${type.name}"
+                                th:value="${type.id}"></option>
+                    </select>
+                    <input class="form-control tm-search-input" name="search" type="text" placeholder="Search..." th:value="${param.search}" aria-label="Search">
                     <button class="tm-search-button" type="submit">
                         <i class="fas fa-search tm-search-icon" aria-hidden="true"></i>
                     </button>

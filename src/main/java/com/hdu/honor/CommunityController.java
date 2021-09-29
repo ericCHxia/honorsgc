@@ -157,6 +157,7 @@ public class CommunityController {
         model.addAttribute("detail",renderer.render(document));
         model.addAttribute("community",community);
         model.addAttribute("user",user);
+        model.addAttribute("types",typeService.getAll());
         return "community/post";
     }
 
@@ -338,10 +339,10 @@ public class CommunityController {
         String fileName=null;
         if (!file.isEmpty()){
             try {
-                fileName=imgService.saveCover(file);
+                fileName=imgService.save(file);
             } catch (ImageUploadException e) {
                 e.printStackTrace();
-                model.addAttribute("message","图片保存失败");
+                model.addAttribute("message",e.getMessage());
                 model.addAttribute("url",String.format("/community/post/%d",communityId));
                 return "redirection";
             }
