@@ -96,8 +96,15 @@
                            th:text="${community.state==0}?'通过审核':(${community.state==1}?'隐藏':'显示')"
                            sec:authorize="hasRole('ADMIN')"></a>
                         <a class="mb-2 tm-btn tm-btn-primary tm-prev-next"
-                           th:if="${#authorization.expression('hasRole(''ADMIN'')')||user.equals(community.user)}">停止报名</a>
-                    </div>                      
+                           th:if="${community.enrolling==true&&(#authorization.expression('hasRole(''ADMIN'')')||user.equals(community.user))}"
+                           th:href="@{/community/change_register(id=${community.id})}">停止报名</a>
+                        <a class="mb-2 tm-btn tm-btn-primary tm-prev-next"
+                           th:if="${community.enrolling==false&&(#authorization.expression('hasRole(''ADMIN'')')||user.equals(community.user))}"
+                           th:href="@{/community/change_register(id=${community.id})}">开始报名</a>
+                        <a class="mb-2 tm-btn tm-btn-primary tm-prev-next"
+                           th:if="${#authorization.expression('hasRole(''ADMIN'')')||user.equals(community.user)}"
+                           th:href="@{/community/post/{id}/manager(id=${community.id})}">参与人员管理</a>
+                    </div>
                     </div>
             </div>
 
@@ -114,9 +121,11 @@
                              th:unless="${#strings.equals(record.img,'')||record.img==null}">
                         <p th:if="${#strings.equals(record.img,'')||record.img==null}">暂无图片</p>
                     </div><br>
+                    <div th:text="${record.detail}"> </div>
                     <label class="tm-color-primary">参与成员：</label>
                     <span th:each="attend:${record.users}" th:text="${attend.name}+' '"></span><br>
-                    <span class="tm-color-primary">活动时间：</span><span th:text="${#dates.format(record.tim, 'yyyy-MM-dd HH:mm')}"></span>
+                    <span class="tm-color-primary">活动时间：</span>
+                    <span th:text="${#dates.format(record.tim, 'yyyy-MM-dd HH:mm')}"></span>
                     <a th:href="@{/community/delrecord(id=${record.id})}"
                        th:if="${record.user.id==user.id||community.isManager(user)||#authorization.expression('hasRole(''ADMIN'')')}">删除</a>
                 </div>
@@ -168,7 +177,7 @@
 <script src="/static/js/jquery.min.js" th:src="@{/js/jquery.min.js}"></script>
 <script src="/static/js/templatemo-script.js" th:src="@{/js/bootstrap.min.js}"></script>
 <script src="/static/js/templatemo-script.js" th:src="@{/js/templatemo-script.js}"></script>
-<script src="https://cdn.jsdelivr.net/npm/@0.2.5/dist/zoomify.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/zoomify@0.2.5/dist/zoomify.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/editormd.min.js"  th:src="@{/lib/editor/editormd.min.js}"></script>
 <script th:src="@{/lib/editor/lib/marked.min.js}"></script>
 <script th:src="@{/lib/editor/lib/prettify.min.js}"></script>

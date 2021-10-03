@@ -9,6 +9,7 @@
 
 package com.hdu.honor.community;
 
+import com.hdu.honor.community.participant.Participant;
 import com.hdu.honor.community.type.CommunityType;
 import com.hdu.honor.community.type.CommunityTypeService;
 import com.hdu.honor.user.User;
@@ -21,6 +22,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -34,19 +37,8 @@ public class CommunityService {
     private CommunityTypeService typeService;
     @Autowired
     private CommunityUserAttendRepository communityUserAttendRepository;
-    public List<Community> getByUserId(int id){
-        return communityRepository.getAllByUserId(id);
-    }
-    public Page<Community> getPagesByUserId(int pageNumber,int pageSize,int id){
-        Sort sort = Sort.by(Sort.Direction.DESC,"tim");
-        Pageable pageable = PageRequest.of(pageNumber,pageSize,sort);
-        return communityRepository.getAllByUserId(pageable,id);
-    }
     public Community get(int id){
         return communityRepository.getCommunityById(id);
-    }
-    public List<User> getParticipate(int id,int type){
-        return userRepository.getParticipant(id,type);
     }
     public long count(){
         return communityRepository.count();
@@ -95,5 +87,23 @@ public class CommunityService {
 
     public List<CommunityUserAttend> getAttend(Community community){
         return communityUserAttendRepository.findCommunityUserAttendsByCommunity(community);
+    }
+    public static Participant user2participant(User user,Integer communityId,Integer type){
+        Participant participant = new Participant();
+        participant.setType(type);
+        participant.setCommunityId(communityId);
+        participant.setUser(user);
+        return participant;
+    }
+    public static List<Participant> user2participant(Collection<User> users,Integer communityId,Integer type){
+        List<Participant> participants = new ArrayList<>();
+        for (User user :
+                users) {
+            participants.add(user2participant(user,communityId,type));
+        }
+        return participants;
+    }
+    public static List<Participant> user2participant(Collection<User> users,Community community,Integer type){
+        return user2participant(users,community.getId(),type);
     }
 }

@@ -126,7 +126,8 @@
     </li>
 </ul>
 <!--个人信息模态框-->
-<div class="modal fade" id="seeUserInfo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" th:fragment="user_info(user)">
+<div class="modal fade" id="seeUserInfo" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" th:fragment="user_info(user)">
     <!--[[${user.subject}]]-->
     <div class="modal-dialog" role="document">
         <form th:action="@{/admin/user_save}" method="post">

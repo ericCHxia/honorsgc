@@ -61,6 +61,7 @@ public class Community {
     @ExcelIgnore
     private Integer lmt;
     private Date tim;
+    private Boolean enrolling;
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "gttid")
     private List<CommunityRecord> records;
@@ -103,5 +104,6 @@ public class Community {
     public Community(){
         this.tim = new Date();
         this.state = 0;
+        this.enrolling = true;
     }
 }

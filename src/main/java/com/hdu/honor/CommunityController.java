@@ -15,6 +15,7 @@ import com.hdu.honor.community.Community;
 import com.hdu.honor.community.CommunityService;
 import com.hdu.honor.community.CommunityUserAttend;
 import com.hdu.honor.community.participant.Participant;
+import com.hdu.honor.community.participant.ParticipantType;
 import com.hdu.honor.community.record.CommunityRecord;
 import com.hdu.honor.community.record.CommunityRecordService;
 import com.hdu.honor.community.type.CommunityType;
@@ -51,9 +52,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequestMapping("/community")
@@ -245,6 +244,60 @@ public class CommunityController {
         model.addAttribute("community",community);
         return "community/editmd";
     }
+    @GetMapping("/post/{id}/manager")
+    public String manager(@PathVariable Integer id,Model model,Authentication authentication){
+        Community community=communityService.get(id);
+        if (community==null){
+            throw new PageNotFindException();
+        }
+        User user = (User) authentication.getPrincipal();
+        if (!community.getUser().equals(user)&&user.getPrivilege()==0){
+            throw new HttpForbiddenException();
+        }
+        model.addAttribute("community",community);
+        return "community/manage";
+    }
+    @PostMapping("/post/{id}/manager")
+    public String managerSubmit(@PathVariable Integer id,
+                                @RequestParam("managers[]") List<Integer> managers,
+                                @RequestParam("participants[]") List<Integer> participants,
+                                Authentication authentication,
+                                Model model){
+        Community community = communityService.get(id);
+        if (community==null){
+            throw new PageNotFindException();
+        }
+        User user = (User) authentication.getPrincipal();
+        if (!community.getUser().equals(user)&&user.getPrivilege()==0){
+            throw new HttpForbiddenException();
+        }
+        Set<Participant> oldManagers = community.getManagers();
+        Set<Participant> oldParticipants = community.getParticipants();
+
+        oldManagers.retainAll(CommunityService.user2participant(userService.gets(managers),community,1));
+        oldParticipants.retainAll(CommunityService.user2participant(userService.gets(participants),community,0));
+
+        communityService.save(community);
+        model.addAttribute("url",String.format("/community/post/%d",community.getId()));
+        model.addAttribute("message","保存成功");
+        return "redirection";
+    }
+    @GetMapping("/change_register")
+    public String changeRegister(@RequestParam("id") Integer id,Authentication authentication,Model model){
+        User user =(User) authentication.getPrincipal();
+        Community community = communityService.get(id);
+        if (community==null){
+            throw new PageNotFindException();
+        }
+        if (!community.getUser().equals(user)&&user.getPrivilege()==0){
+            throw new HttpForbiddenException();
+        }
+        community.setEnrolling(!community.getEnrolling());
+
+        model.addAttribute("url",String.format("/community/post/%d",community.getId()));
+        model.addAttribute("message","修改成功");
+        return "redirection";
+    }
     @GetMapping("/change_state")
     @PreAuthorize("hasRole('ADMIN')")
     public String changeState(@RequestHeader(value = "Referer",defaultValue = "/community") String referer,
@@ -278,6 +331,11 @@ public class CommunityController {
             model.addAttribute("url","/community");
             return "redirection";
         }
+        if (!community.getEnrolling()){
+            model.addAttribute("message","共同体已停止报名");
+            model.addAttribute("url","/community");
+            return "redirection";
+        }
         User user = (User) authentication.getPrincipal();
         if (community.isParticipant(user)){
             community.removeParticipant(user);
@@ -290,6 +348,11 @@ public class CommunityController {
             community.removeManager(user);
             communityService.save(community);
             model.addAttribute("message","你成功取消了指导该共同体");
+            model.addAttribute("url",url);
+            return "redirection";
+        }
+        if (!community.getEnrolling()){
+            model.addAttribute("message","当前共同体的报名已结束哦");
             model.addAttribute("url",url);
             return "redirection";
         }
