@@ -356,7 +356,7 @@ public class CommunityController {
             model.addAttribute("url",url);
             return "redirection";
         }
-        if (typeId==0&&community.getParticipants().size()>=community.getLmt()){
+        if (community.getLmt()!=0&&typeId==0&&community.getParticipants().size()>=community.getLmt()){
             model.addAttribute("message","参与人数已达上限");
             model.addAttribute("url",url);
             return "redirection";
